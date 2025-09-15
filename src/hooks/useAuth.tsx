@@ -166,9 +166,9 @@ export const useAuth = () => {
         return { error };
       }
 
-      // Profile will be created automatically by database trigger
+      // Success - user needs to confirm email
       setAuthState(prev => ({ ...prev, loading: false }));
-      return { error: null };
+      return { error: null, needsConfirmation: !data.user?.email_confirmed_at };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao cadastrar';
       setAuthState(prev => ({ ...prev, loading: false, error: errorMessage }));

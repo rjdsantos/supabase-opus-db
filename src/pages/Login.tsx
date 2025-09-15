@@ -17,6 +17,7 @@ const Login = () => {
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'signin');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   
   // Form states
   const [signInData, setSignInData] = useState({ email: '', password: '' });
@@ -88,21 +89,22 @@ const Login = () => {
     // Clean phone number (digits only)
     const cleanPhone = signUpData.phone.replace(/\D/g, '');
     
-    const { error } = await signUp(
+    const result = await signUp(
       signUpData.email,
       signUpData.password,
       signUpData.full_name,
       cleanPhone || undefined
     );
 
-    if (error) {
-      if (typeof error === 'string' && error.includes('already registered')) {
+    if (result.error) {
+      if (typeof result.error === 'string' && result.error.includes('already registered')) {
         setError('Este e-mail já está cadastrado. Tente fazer login.');
       } else {
-        setError(typeof error === 'string' ? error : error.message);
+        setError(typeof result.error === 'string' ? result.error : result.error.message);
       }
-    } else {
-      // Success will be handled by useAuth redirect
+    } else if (result.needsConfirmation) {
+      setShowConfirmation(true);
+      setSignUpData({ full_name: '', email: '', phone: '', password: '' });
     }
     
     setLoading(false);
@@ -218,82 +220,102 @@ const Login = () => {
               </TabsContent>
 
               <TabsContent value="signup" className="space-y-4">
-                <form onSubmit={handleSignUp} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-name">Nome Completo</Label>
-                    <Input
-                      id="signup-name"
-                      type="text"
-                      value={signUpData.full_name}
-                      onChange={(e) => setSignUpData(prev => ({ ...prev, full_name: e.target.value }))}
-                      placeholder="Seu nome completo"
-                      required
-                      disabled={loading}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email">E-mail</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      value={signUpData.email}
-                      onChange={(e) => setSignUpData(prev => ({ ...prev, email: e.target.value }))}
-                      placeholder="seu@email.com"
-                      required
-                      disabled={loading}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-phone">Telefone (opcional)</Label>
-                    <Input
-                      id="signup-phone"
-                      type="tel"
-                      value={signUpData.phone}
-                      onChange={(e) => setSignUpData(prev => ({ ...prev, phone: formatPhone(e.target.value) }))}
-                      placeholder="(11) 99999-9999"
-                      disabled={loading}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password">Senha</Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      value={signUpData.password}
-                      onChange={(e) => setSignUpData(prev => ({ ...prev, password: e.target.value }))}
-                      placeholder="Escolha uma senha"
-                      required
-                      disabled={loading}
-                    />
-                  </div>
-
-                  {(error || authError) && (
-                    <Alert variant="destructive">
+                {showConfirmation ? (
+                  <div className="text-center space-y-4">
+                    <Alert>
                       <AlertDescription>
-                        {error || authError}
+                        <strong>Cadastro realizado com sucesso!</strong><br />
+                        Enviamos um e-mail de confirmação para você. Clique no link recebido para ativar sua conta e começar a usar a plataforma.
                       </AlertDescription>
                     </Alert>
-                  )}
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        setShowConfirmation(false);
+                        handleTabChange('signin');
+                      }}
+                    >
+                      Ir para Login
+                    </Button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSignUp} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-name">Nome Completo</Label>
+                      <Input
+                        id="signup-name"
+                        type="text"
+                        value={signUpData.full_name}
+                        onChange={(e) => setSignUpData(prev => ({ ...prev, full_name: e.target.value }))}
+                        placeholder="Seu nome completo"
+                        required
+                        disabled={loading}
+                      />
+                    </div>
 
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
-                    disabled={loading}
-                    size="lg"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Cadastrando...
-                      </>
-                    ) : (
-                      'Cadastrar'
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-email">E-mail</Label>
+                      <Input
+                        id="signup-email"
+                        type="email"
+                        value={signUpData.email}
+                        onChange={(e) => setSignUpData(prev => ({ ...prev, email: e.target.value }))}
+                        placeholder="seu@email.com"
+                        required
+                        disabled={loading}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-phone">Telefone (opcional)</Label>
+                      <Input
+                        id="signup-phone"
+                        type="tel"
+                        value={signUpData.phone}
+                        onChange={(e) => setSignUpData(prev => ({ ...prev, phone: formatPhone(e.target.value) }))}
+                        placeholder="(11) 99999-9999"
+                        disabled={loading}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-password">Senha</Label>
+                      <Input
+                        id="signup-password"
+                        type="password"
+                        value={signUpData.password}
+                        onChange={(e) => setSignUpData(prev => ({ ...prev, password: e.target.value }))}
+                        placeholder="Escolha uma senha"
+                        required
+                        disabled={loading}
+                      />
+                    </div>
+
+                    {(error || authError) && (
+                      <Alert variant="destructive">
+                        <AlertDescription>
+                          {error || authError}
+                        </AlertDescription>
+                      </Alert>
                     )}
-                  </Button>
-                </form>
+
+                    <Button 
+                      type="submit" 
+                      className="w-full" 
+                      disabled={loading}
+                      size="lg"
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Cadastrando...
+                        </>
+                      ) : (
+                        'Cadastrar'
+                      )}
+                    </Button>
+                  </form>
+                )}
               </TabsContent>
             </Tabs>
           </CardContent>

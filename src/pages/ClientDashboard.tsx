@@ -1,48 +1,31 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileText } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import AuthGuard from "@/components/AuthGuard";
+import Header from "@/components/Header";
 
 const ClientDashboard = () => {
-  const navigate = useNavigate();
-
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate('/')}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Voltar ao início
-          </Button>
-        </div>
-
-        <div className="max-w-2xl mx-auto">
+    <AuthGuard requiredRole="client">
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="container mx-auto max-w-4xl p-4">
+          <h1 className="text-2xl font-bold mb-6">Meus Orçamentos</h1>
+          
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-center mb-4">
-                <FileText className="h-8 w-8 text-primary" />
-              </div>
-              <CardTitle className="text-center">
-                Meus Orçamentos
-              </CardTitle>
+              <CardTitle>Dashboard do Cliente</CardTitle>
             </CardHeader>
             <CardContent className="text-center py-8">
               <p className="text-muted-foreground mb-4">
-                Área do cliente para gerenciar orçamentos
+                Área do cliente será implementada em breve
               </p>
               <p className="text-sm text-muted-foreground">
-                Esta página será implementada após a criação da estrutura completa do banco de dados com as tabelas de orçamentos, detalhes e histórico.
+                Aqui você poderá visualizar e gerenciar seus orçamentos.
               </p>
             </CardContent>
           </Card>
         </div>
       </div>
-    </div>
+    </AuthGuard>
   );
 };
 

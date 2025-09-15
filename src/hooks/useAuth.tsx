@@ -155,7 +155,8 @@ export const useAuth = () => {
         options: {
           emailRedirectTo: redirectUrl,
           data: {
-            full_name
+            full_name,
+            phone
           }
         }
       });
@@ -165,11 +166,8 @@ export const useAuth = () => {
         return { error };
       }
 
-      // If user is created, create profile
-      if (data.user) {
-        await createProfile(data.user, { full_name, phone });
-      }
-
+      // Profile will be created automatically by database trigger
+      setAuthState(prev => ({ ...prev, loading: false }));
       return { error: null };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao cadastrar';

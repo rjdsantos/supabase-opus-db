@@ -46,6 +46,123 @@ export type Database = {
           },
         ]
       }
+      ia_interacoes: {
+        Row: {
+          acao: string
+          created_at: string
+          data_interacao: string
+          id_cliente: string
+          id_interacao: string
+          id_sugestao: string
+        }
+        Insert: {
+          acao: string
+          created_at?: string
+          data_interacao?: string
+          id_cliente: string
+          id_interacao?: string
+          id_sugestao: string
+        }
+        Update: {
+          acao?: string
+          created_at?: string
+          data_interacao?: string
+          id_cliente?: string
+          id_interacao?: string
+          id_sugestao?: string
+        }
+        Relationships: []
+      }
+      ia_sugestoes: {
+        Row: {
+          campo: string
+          created_at: string
+          data_geracao: string
+          id_orcamento: string
+          id_sugestao: string
+          status: string
+          texto_sugerido: string
+        }
+        Insert: {
+          campo: string
+          created_at?: string
+          data_geracao?: string
+          id_orcamento: string
+          id_sugestao?: string
+          status?: string
+          texto_sugerido: string
+        }
+        Update: {
+          campo?: string
+          created_at?: string
+          data_geracao?: string
+          id_orcamento?: string
+          id_sugestao?: string
+          status?: string
+          texto_sugerido?: string
+        }
+        Relationships: []
+      }
+      notificacoes: {
+        Row: {
+          created_at: string
+          data_envio: string
+          data_tentativa: string | null
+          erro_mensagem: string | null
+          id_notificacao: string
+          id_orcamento: string
+          status_envio: string
+          tipo: string
+        }
+        Insert: {
+          created_at?: string
+          data_envio?: string
+          data_tentativa?: string | null
+          erro_mensagem?: string | null
+          id_notificacao?: string
+          id_orcamento: string
+          status_envio?: string
+          tipo: string
+        }
+        Update: {
+          created_at?: string
+          data_envio?: string
+          data_tentativa?: string | null
+          erro_mensagem?: string | null
+          id_notificacao?: string
+          id_orcamento?: string
+          status_envio?: string
+          tipo?: string
+        }
+        Relationships: []
+      }
+      orcamento_detalhes: {
+        Row: {
+          chave: string
+          created_at: string
+          id_detalhe: string
+          id_orcamento: string
+          updated_at: string
+          valor: string | null
+        }
+        Insert: {
+          chave: string
+          created_at?: string
+          id_detalhe?: string
+          id_orcamento: string
+          updated_at?: string
+          valor?: string | null
+        }
+        Update: {
+          chave?: string
+          created_at?: string
+          id_detalhe?: string
+          id_orcamento?: string
+          updated_at?: string
+          valor?: string | null
+        }
+        Relationships: []
+      }
       orcamentos: {
         Row: {
           categoria: Database["public"]["Enums"]["categoria_orcamento"]
@@ -53,6 +170,7 @@ export type Database = {
           data_envio: string
           id_cliente: string
           id_orcamento: string
+          is_draft: boolean | null
           status: Database["public"]["Enums"]["status_orcamento"]
           updated_at: string
         }
@@ -62,6 +180,7 @@ export type Database = {
           data_envio?: string
           id_cliente: string
           id_orcamento?: string
+          is_draft?: boolean | null
           status?: Database["public"]["Enums"]["status_orcamento"]
           updated_at?: string
         }
@@ -71,6 +190,7 @@ export type Database = {
           data_envio?: string
           id_cliente?: string
           id_orcamento?: string
+          is_draft?: boolean | null
           status?: Database["public"]["Enums"]["status_orcamento"]
           updated_at?: string
         }
@@ -120,7 +240,16 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      arvore_tamanho: "ate_1m" | "ate_1_5m" | "ate_2m" | "acima_2m"
       categoria_orcamento: "decoracao" | "lembrancinhas" | "presentes"
+      evento_tipo:
+        | "aniversario"
+        | "cha_de_bebe"
+        | "mini_wedding"
+        | "batizado"
+        | "festa_tematica"
+        | "evento_corporativo"
+        | "arvore_de_natal"
       status_orcamento: "novo" | "respondido" | "concluido"
       user_role: "client" | "admin"
     }
@@ -250,7 +379,17 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      arvore_tamanho: ["ate_1m", "ate_1_5m", "ate_2m", "acima_2m"],
       categoria_orcamento: ["decoracao", "lembrancinhas", "presentes"],
+      evento_tipo: [
+        "aniversario",
+        "cha_de_bebe",
+        "mini_wedding",
+        "batizado",
+        "festa_tematica",
+        "evento_corporativo",
+        "arvore_de_natal",
+      ],
       status_orcamento: ["novo", "respondido", "concluido"],
       user_role: ["client", "admin"],
     },

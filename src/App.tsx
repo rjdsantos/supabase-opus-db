@@ -6,6 +6,8 @@ import Login from "./pages/Login";
 import AdminLogin from "./pages/AdminLogin";
 import ClientDashboard from "./pages/ClientDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import OrcamentoDecoracao from "./pages/OrcamentoDecoracao";
+import OrcamentoConfirmacao from "./pages/OrcamentoConfirmacao";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -17,6 +19,8 @@ const App = () => (
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/orcamentos" element={<ClientDashboard />} />
         <Route path="/admin/orcamentos" element={<AdminDashboard />} />
+        <Route path="/orcamento/decoracao" element={<OrcamentoDecoracao />} />
+        <Route path="/orcamento/confirmacao" element={<OrcamentoConfirmacao />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

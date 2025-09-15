@@ -1,6 +1,5 @@
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState, useEffect } from "react";
 
 const WhatsAppButton = () => {
@@ -35,22 +34,16 @@ const WhatsAppButton = () => {
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            onClick={handleWhatsAppClick}
-            disabled={!whatsappNumber}
-            size="lg"
-            className="rounded-full h-14 w-14 bg-green-500 hover:bg-green-600 shadow-lg hover:shadow-xl transition-all duration-200 text-white"
-            aria-label="Fale comigo no WhatsApp"
-          >
-            <MessageCircle className="h-6 w-6" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="left">
-          <p>{whatsappNumber ? "Fale comigo no WhatsApp" : "Número indisponível no momento"}</p>
-        </TooltipContent>
-      </Tooltip>
+      <Button
+        onClick={handleWhatsAppClick}
+        disabled={!whatsappNumber}
+        size="lg"
+        className="rounded-full h-14 w-14 bg-green-500 hover:bg-green-600 shadow-lg hover:shadow-xl transition-all duration-200 text-white"
+        aria-label={whatsappNumber ? "Fale comigo no WhatsApp" : "Número indisponível no momento"}
+        title={whatsappNumber ? "Fale comigo no WhatsApp" : "Número indisponível no momento"}
+      >
+        <MessageCircle className="h-6 w-6" />
+      </Button>
     </div>
   );
 };

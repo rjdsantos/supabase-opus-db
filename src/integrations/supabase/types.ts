@@ -14,6 +14,68 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_status: {
+        Row: {
+          admin_id: string | null
+          data_alteracao: string
+          id: string
+          id_orcamento: string
+          status: Database["public"]["Enums"]["status_orcamento"]
+        }
+        Insert: {
+          admin_id?: string | null
+          data_alteracao?: string
+          id?: string
+          id_orcamento: string
+          status: Database["public"]["Enums"]["status_orcamento"]
+        }
+        Update: {
+          admin_id?: string | null
+          data_alteracao?: string
+          id?: string
+          id_orcamento?: string
+          status?: Database["public"]["Enums"]["status_orcamento"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_status_id_orcamento_fkey"
+            columns: ["id_orcamento"]
+            isOneToOne: false
+            referencedRelation: "orcamentos"
+            referencedColumns: ["id_orcamento"]
+          },
+        ]
+      }
+      orcamentos: {
+        Row: {
+          categoria: Database["public"]["Enums"]["categoria_orcamento"]
+          created_at: string
+          data_envio: string
+          id_cliente: string
+          id_orcamento: string
+          status: Database["public"]["Enums"]["status_orcamento"]
+          updated_at: string
+        }
+        Insert: {
+          categoria: Database["public"]["Enums"]["categoria_orcamento"]
+          created_at?: string
+          data_envio?: string
+          id_cliente: string
+          id_orcamento?: string
+          status?: Database["public"]["Enums"]["status_orcamento"]
+          updated_at?: string
+        }
+        Update: {
+          categoria?: Database["public"]["Enums"]["categoria_orcamento"]
+          created_at?: string
+          data_envio?: string
+          id_cliente?: string
+          id_orcamento?: string
+          status?: Database["public"]["Enums"]["status_orcamento"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -58,6 +120,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      categoria_orcamento: "decoracao" | "lembrancinhas" | "presentes"
+      status_orcamento: "novo" | "respondido" | "concluido"
       user_role: "client" | "admin"
     }
     CompositeTypes: {
@@ -186,6 +250,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      categoria_orcamento: ["decoracao", "lembrancinhas", "presentes"],
+      status_orcamento: ["novo", "respondido", "concluido"],
       user_role: ["client", "admin"],
     },
   },

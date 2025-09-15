@@ -1,0 +1,129 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+
+export interface Orcamento {
+  id_orcamento: string;
+  categoria: 'decoracao' | 'lembrancinhas' | 'presentes';
+  status: 'novo' | 'respondido' | 'concluido';
+  data_envio: string;
+  cliente_nome: string;
+}
+
+export const useOrcamentos = () => {
+  const [orcamentos, setOrcamentos] = useState<Orcamento[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const fetchOrcamentos = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const { data, error } = await supabase
+        .from('orcamentos')
+        .select(`
+          id_orcamento,
+          categoria,
+          status,
+          data_envio,
+          profiles!inner(full_name)
+        `)
+        .order('data_envio', { ascending: false });
+
+      if (error) throw error;
+
+      const mappedData: Orcamento[] = data.map((item: any) => ({
+        id_orcamento: item.id_orcamento,
+        categoria: item.categoria,
+        status: item.status,
+        data_envio: item.data_envio,
+        cliente_nome: item.profiles.full_name,
+      }));
+
+      setOrcamentos(mappedData);
+    } catch (error: any) {
+      setError(error.message);
+      console.error('Error fetching orçamentos:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateStatus = async (id_orcamento: string, newStatus: 'novo' | 'respondido' | 'concluido') => {
+    try {
+      const { error: updateError } = await supabase
+        .from('orcamentos')
+        .update({ status: newStatus })
+        .eq('id_orcamento', id_orcamento);
+
+      if (updateError) throw updateError;
+
+      // Log status change
+      const { error: logError } = await supabase
+        .from('admin_status')
+        .insert({
+          id_orcamento,
+          status: newStatus,
+          admin_id: (await supabase.auth.getUser()).data.user?.id
+        });
+
+      if (logError) throw logError;
+
+      // Update local state
+      setOrcamentos(prev => 
+        prev.map(orc => 
+          orc.id_orcamento === id_orcamento 
+            ? { ...orc, status: newStatus }
+            : orc
+        )
+      );
+
+      toast({
+        title: "Status atualizado",
+        description: "Status do orçamento alterado com sucesso.",
+      });
+
+    } catch (error: any) {
+      console.error('Error updating status:', error);
+      toast({
+        title: "Erro ao atualizar",
+        description: error.message || "Falha ao alterar o status do orçamento.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchOrcamentos();
+
+    // Real-time subscriptions
+    const channel = supabase
+      .channel('orcamentos-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'orcamentos'
+        },
+        () => {
+          fetchOrcamentos();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  return {
+    orcamentos,
+    loading,
+    error,
+    fetchOrcamentos,
+    updateStatus
+  };
+};

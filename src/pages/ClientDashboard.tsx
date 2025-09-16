@@ -26,21 +26,21 @@ const categories: CategoryCard[] = [
     title: "Decoração",
     description: "Transforme seu evento com decorações únicas e personalizadas",
     icon: <Sparkles className="h-8 w-8 text-primary" />,
-    route: "/orcamentos/decoracao"
+    route: "/orcamento/decoracao"
   },
   {
     id: "lembrancinhas", 
     title: "Lembrancinhas",
     description: "Lembrancinhas especiais para marcar momentos inesquecíveis",
     icon: <Heart className="h-8 w-8 text-primary" />,
-    route: "/orcamentos/lembrancinhas"
+    route: "/orcamento/lembrancinhas"
   },
   {
     id: "presentes",
     title: "Presentes Especiais", 
     description: "Presentes únicos e personalizados para todas as ocasiões",
     icon: <Gift className="h-8 w-8 text-primary" />,
-    route: "/orcamentos/presentes"
+    route: "/orcamento/presentes"
   }
 ];
 

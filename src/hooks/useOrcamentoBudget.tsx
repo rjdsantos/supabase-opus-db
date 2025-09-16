@@ -33,8 +33,8 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
       setLoading(true);
       setError(null);
 
-      // Try to find existing draft
-      const { data: existingBudget, error: budgetError } = await supabase
+      // Try to find existing draft (idempotent and safe with StrictMode)
+      const { data: existingBudget, error: findError } = await supabase
         .from('orcamentos')
         .select('*')
         .eq('id_cliente', user.id)
@@ -42,12 +42,12 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
         .eq('is_draft', true)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       let currentBudget = existingBudget;
 
-      if (budgetError && budgetError.code === 'PGRST116') {
-        // No draft found, create new one
+      if (!currentBudget) {
+        // Attempt to create a new draft
         const { data: newBudget, error: createError } = await supabase
           .from('orcamentos')
           .insert({
@@ -59,10 +59,28 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
           .select()
           .single();
 
-        if (createError) throw createError;
-        currentBudget = newBudget;
-      } else if (budgetError) {
-        throw budgetError;
+        if (createError) {
+          // Handle race condition: if a duplicate was created concurrently, fetch it
+          if (createError.code === '23505' || createError.code === '409') {
+            const { data: retryBudget, error: retryError } = await supabase
+              .from('orcamentos')
+              .select('*')
+              .eq('id_cliente', user.id)
+              .eq('categoria', categoria)
+              .eq('is_draft', true)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            if (retryError) throw retryError;
+            currentBudget = retryBudget;
+          } else {
+            throw createError;
+          }
+        } else {
+          currentBudget = newBudget;
+        }
+      } else if (findError) {
+        throw findError;
       }
 
       setBudget(currentBudget);

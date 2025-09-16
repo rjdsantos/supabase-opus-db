@@ -91,12 +91,22 @@ const ClientDashboard = () => {
           .select('id_orcamento, categoria, status, created_at, is_draft')
           .eq('id_cliente', profile.user_id)
           .order('created_at', { ascending: false })
-          .limit(10);
+          .limit(20);
 
         if (draftsError) {
           console.error('Error fetching drafts:', draftsError);
         } else {
-          setDrafts(draftsData || []);
+          const items = draftsData || [];
+          // Avoid showing duplicate drafts for the same category (keep the most recent)
+          const seenDraftCategory = new Set<string>();
+          const cleaned = items.filter((item) => {
+            if (item.is_draft === true) {
+              if (seenDraftCategory.has(item.categoria)) return false;
+              seenDraftCategory.add(item.categoria);
+            }
+            return true;
+          });
+          setDrafts(cleaned);
         }
       } catch (error) {
         console.error('Error fetching data:', error);

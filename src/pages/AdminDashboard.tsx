@@ -1,7 +1,8 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Eye } from "lucide-react";
+import { Eye, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import AuthGuard from "@/components/AuthGuard";
 import Header from "@/components/Header";
 import { useOrcamentos } from "@/hooks/useOrcamentos";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminDashboard = () => {
   const { orcamentos, loading, error, fetchOrcamentos, updateStatus } = useOrcamentos();
@@ -51,12 +53,49 @@ const AdminDashboard = () => {
     navigate(`/admin/orcamentos/${id_orcamento}`);
   };
 
+  // Real-time subscriptions for live updates
+  useEffect(() => {
+    fetchOrcamentos();
+
+    const channel = supabase
+      .channel('admin-orcamentos-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'orcamentos'
+        },
+        () => {
+          console.log('Orçamento updated, refreshing data...');
+          fetchOrcamentos();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*', 
+          schema: 'public',
+          table: 'admin_status'
+        },
+        () => {
+          console.log('Status updated, refreshing data...');
+          fetchOrcamentos();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchOrcamentos]);
+
   if (loading) {
     return (
       <AuthGuard requiredRole="admin">
         <div className="min-h-screen bg-background">
           <Header />
-          <div className="container mx-auto max-w-7xl p-4 py-8">
+          <div className="container mx-auto max-w-7xl p-6 py-8">
             <div className="mb-8">
               <h1 className="text-3xl font-bold">Orçamentos Recebidos</h1>
               <p className="text-muted-foreground">Gerencie todos os orçamentos dos clientes</p>
@@ -90,10 +129,24 @@ const AdminDashboard = () => {
     <AuthGuard requiredRole="admin">
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="container mx-auto max-w-7xl p-4 py-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold">Orçamentos Recebidos</h1>
-            <p className="text-muted-foreground">Gerencie todos os orçamentos dos clientes</p>
+        <div className="container mx-auto max-w-7xl p-6 py-8">
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">Orçamentos Recebidos</h1>
+              <p className="text-muted-foreground">
+                Gerencie todos os orçamentos dos clientes • {orcamentos.length} orçamentos
+              </p>
+            </div>
+            
+            <Button
+              variant="outline"
+              onClick={fetchOrcamentos}
+              className="flex items-center gap-2"
+              disabled={loading}
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              Atualizar
+            </Button>
           </div>
 
           {error && (
@@ -113,11 +166,11 @@ const AdminDashboard = () => {
           )}
 
           {orcamentos.length === 0 && !error ? (
-            <div className="text-center py-12">
+            <div className="text-center py-16">
               <div className="text-6xl mb-4">📋</div>
               <h3 className="text-xl font-medium mb-2">Nenhum orçamento recebido ainda</h3>
               <p className="text-muted-foreground">
-                Os orçamentos enviados pelos clientes aparecerão aqui.
+                Os orçamentos enviados pelos clientes aparecerão aqui em tempo real.
               </p>
             </div>
           ) : (
@@ -125,11 +178,11 @@ const AdminDashboard = () => {
               {orcamentos.map((orcamento) => (
                 <Card 
                   key={orcamento.id_orcamento} 
-                  className="rounded-2xl hover:shadow-lg transition-shadow duration-200"
+                  className="rounded-2xl hover:shadow-lg transition-all duration-200 border-2 hover:border-primary/20"
                 >
                   <CardHeader className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg text-foreground">
+                      <CardTitle className="text-lg text-foreground truncate">
                         {orcamento.cliente_nome}
                       </CardTitle>
                       <Badge variant={getStatusColor(orcamento.status)}>
@@ -148,9 +201,13 @@ const AdminDashboard = () => {
                         locale: ptBR 
                       })}
                     </div>
+                    
+                    <div className="text-xs text-muted-foreground font-mono bg-muted/50 p-2 rounded">
+                      ID: {orcamento.id_orcamento.split('-')[0]}...
+                    </div>
                   </CardContent>
 
-                  <CardFooter className="flex gap-2">
+                  <CardFooter className="flex gap-2 pt-4">
                     <Button 
                       variant="default" 
                       size="sm"
@@ -158,7 +215,7 @@ const AdminDashboard = () => {
                       onClick={() => handleViewDetails(orcamento.id_orcamento)}
                     >
                       <Eye className="w-4 h-4 mr-2" />
-                      Visualizar
+                      Detalhes
                     </Button>
                     
                     <Select 

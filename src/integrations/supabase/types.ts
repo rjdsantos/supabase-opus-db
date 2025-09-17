@@ -194,7 +194,15 @@ export type Database = {
           status?: Database["public"]["Enums"]["status_orcamento"]
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_orcamentos_cliente"
+            columns: ["id_cliente"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       profiles: {
         Row: {

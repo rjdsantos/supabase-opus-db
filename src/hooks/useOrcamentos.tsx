@@ -28,8 +28,9 @@ export const useOrcamentos = () => {
           categoria,
           status,
           data_envio,
-          profiles!inner(full_name)
+          profiles!fk_orcamentos_cliente(full_name)
         `)
+        .eq('is_draft', false)
         .order('data_envio', { ascending: false });
 
       if (error) throw error;

@@ -653,14 +653,14 @@ export const OrcamentoDecoracao = () => {
                     Salvar Rascunho
                   </Button>
 
-                  {incluirLembrancinhas && incluirLembrancinhas !== 'nao' && !showContinueOptions && (
+                  {incluirLembrancinhas === 'sim' && !showContinueOptions && (
                     <Button onClick={handleAdvance} disabled={saving}>
                       {saving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                      {incluirLembrancinhas === 'sim' ? 'Avançar' : 'Continuar'}
+                      Avançar para Lembrancinhas
                     </Button>
                   )}
 
-                  {(!incluirLembrancinhas || showContinueOptions) && (
+                  {(incluirLembrancinhas === 'nao' || !incluirLembrancinhas || showContinueOptions) && (
                     <Button onClick={handleFinalize} disabled={saving}>
                       {saving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                       Finalizar Orçamento

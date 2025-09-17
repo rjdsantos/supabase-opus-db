@@ -26,7 +26,6 @@ import { useOrcamentoBudget } from '@/hooks/useOrcamentoBudget';
 import { useOrcamentoRelated } from '@/hooks/useOrcamentoRelated';
 import { AISuggestions } from '@/components/AISuggestions';
 import { LinkedBudgets } from '@/components/LinkedBudgets';
-import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
 const eventoTipos = [
@@ -86,7 +85,6 @@ type FormData = z.infer<typeof formSchema>;
 
 export const OrcamentoDecoracao = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const { budget, details, loading, saving, error, saveDraft, finalizeBudget, deleteDetails } = useOrcamentoBudget('decoracao');
   const { finalizeAndCreateLinked } = useOrcamentoRelated();
   const [showContinueOptions, setShowContinueOptions] = useState(false);
@@ -204,15 +202,6 @@ export const OrcamentoDecoracao = () => {
   };
 
   const handleFinalize = async () => {
-    if (!budget) {
-      toast({
-        title: "Erro",
-        description: "Orçamento não encontrado. Tente recarregar a página.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     const isValid = await form.trigger();
     if (!isValid) return;
 

@@ -203,64 +203,105 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
   };
 
   const finalizeBudget = async (formData: Record<string, string>) => {
-    if (!budget) {
-      throw new Error('Orçamento não encontrado');
+    if (!user) {
+      throw new Error('Usuário não autenticado');
     }
 
     try {
       setSaving(true);
+      const now = new Date().toISOString();
 
-      // Save all form data first
-      const promises = Object.entries(formData).map(([key, value]) =>
-        saveDetail(key, value)
-      );
-      await Promise.all(promises);
+      let current = budget;
 
-      // Finalize the budget
-      const { error: updateError } = await supabase
-        .from('orcamentos')
-        .update({
-          is_draft: false,
-          data_envio: new Date().toISOString()
-        })
-        .eq('id_orcamento', budget.id_orcamento);
+      // If there is no budget yet, create a finalized one immediately
+      if (!current) {
+        const { data: newBudget, error: createError } = await supabase
+          .from('orcamentos')
+          .insert({
+            id_cliente: user.id,
+            categoria,
+            status: 'novo',
+            is_draft: false,
+            data_envio: now,
+          })
+          .select()
+          .single();
 
-      if (updateError) throw updateError;
+        if (createError) throw createError;
+        current = newBudget;
+        setBudget(newBudget);
+      }
+
+      // Save all form data for the current budget id
+      const detailEntries = Object.entries(formData || {});
+      if (detailEntries.length > 0) {
+        const promises = detailEntries.map(([key, value]) =>
+          supabase
+            .from('orcamento_detalhes')
+            .upsert(
+              {
+                id_orcamento: current!.id_orcamento,
+                chave: key,
+                valor: value,
+              },
+              { onConflict: 'id_orcamento,chave' }
+            )
+        );
+        await Promise.all(promises);
+      }
+
+      // If existing budget was draft, finalize it now
+      if (budget && budget.id_orcamento === current.id_orcamento && budget.is_draft) {
+        const { error: updateError } = await supabase
+          .from('orcamentos')
+          .update({
+            is_draft: false,
+            data_envio: now,
+          })
+          .eq('id_orcamento', current.id_orcamento)
+          .eq('id_cliente', user.id);
+
+        if (updateError) throw updateError;
+
+        setBudget((prev) =>
+          prev
+            ? {
+                ...prev,
+                is_draft: false,
+                data_envio: now,
+              }
+            : prev
+        );
+      }
 
       // Create notifications
       const notificationPromises = [
         supabase.from('notificacoes').insert({
-          id_orcamento: budget.id_orcamento,
+          id_orcamento: current.id_orcamento,
           tipo: 'email_cliente',
-          status_envio: 'pendente'
+          status_envio: 'pendente',
         }),
         supabase.from('notificacoes').insert({
-          id_orcamento: budget.id_orcamento,
+          id_orcamento: current.id_orcamento,
           tipo: 'email_admin',
-          status_envio: 'pendente'
-        })
+          status_envio: 'pendente',
+        }),
       ];
 
       await Promise.all(notificationPromises);
 
-      setBudget(prev => prev ? {
-        ...prev,
-        is_draft: false,
-        data_envio: new Date().toISOString()
-      } : null);
-
       toast({
-        title: "Orçamento finalizado",
-        description: "Seu orçamento foi enviado com sucesso!",
+        title: 'Orçamento finalizado',
+        description: 'Seu orçamento foi enviado com sucesso!',
       });
 
-      return budget.id_orcamento;
+      return current.id_orcamento;
     } catch (error: any) {
       console.error('Error finalizing budget:', error);
       toast({
-        title: "Erro ao finalizar",
-        description: error.message || "Falha ao finalizar o orçamento.",
-        variant: "destructive",
+        title: 'Erro ao finalizar',
+        description: error.message || 'Falha ao finalizar o orçamento.',
+        variant: 'destructive',
       });
       throw error;
     } finally {

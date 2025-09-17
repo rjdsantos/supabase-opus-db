@@ -40,7 +40,7 @@ export const useOrcamentos = () => {
         categoria: item.categoria,
         status: item.status,
         data_envio: item.data_envio,
-        cliente_nome: item.profiles.full_name,
+        cliente_nome: item.profiles?.full_name || 'Nome não informado',
       }));
 
       setOrcamentos(mappedData);

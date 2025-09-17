@@ -40,13 +40,14 @@ async function checkIfAlreadySent(idOrcamento: string, tipo: string): Promise<bo
   return !!data;
 }
 
-async function logNotification(idOrcamento: string, tipo: string, statusEnvio: string = 'enviado') {
+async function logNotification(idOrcamento: string, tipo: string, statusEnvio: string = 'enviado', errorMessage?: string) {
   await supabase
     .from('notificacoes')
     .insert({
       id_orcamento: idOrcamento,
       tipo,
       status_envio: statusEnvio,
+      erro_mensagem: errorMessage || null,
       data_envio: new Date().toISOString()
     });
 }
@@ -236,40 +237,56 @@ serve(async (req) => {
     // 1. Email para o Cliente
     if (!await checkIfAlreadySent(id_orcamento, 'email_cliente')) {
       try {
-        await resend.emails.send({
+        console.log('🔄 Enviando email para cliente:', data.cliente_email);
+        const emailResponse = await resend.emails.send({
           from: emailSender,
           to: [data.cliente_email],
           subject: `Confirmação do seu orçamento #${id_orcamento}`,
           html: generateClientEmailContent(data),
         });
         
+        console.log('📧 Resposta do Resend para cliente:', emailResponse);
+        
+        if (emailResponse.error) {
+          throw new Error(`Resend API Error: ${JSON.stringify(emailResponse.error)}`);
+        }
+        
         await logNotification(id_orcamento, 'email_cliente');
         results.email_cliente = true;
-        console.log('✅ Email cliente enviado');
+        console.log('✅ Email cliente enviado com sucesso - ID:', emailResponse.data?.id);
       } catch (error) {
-        console.error('❌ Erro ao enviar email cliente:', error);
-        await logNotification(id_orcamento, 'email_cliente', 'falhou');
+        console.error('❌ Erro detalhado ao enviar email cliente:', error);
+        console.error('❌ Stack trace:', error.stack);
+        await logNotification(id_orcamento, 'email_cliente', 'falhou', error.message);
       }
     } else {
       console.log('ℹ️ Email cliente já enviado anteriormente');
     }
 
-    // 2. Email para o Admin
+    // 2. Email para o Admin  
     if (!await checkIfAlreadySent(id_orcamento, 'email_admin')) {
       try {
-        await resend.emails.send({
+        console.log('🔄 Enviando email para admin:', adminEmail);
+        const emailResponse = await resend.emails.send({
           from: emailSender,
           to: [adminEmail],
           subject: `Novo orçamento de ${data.cliente_nome} (#${id_orcamento})`,
           html: generateAdminEmailContent(data),
         });
         
+        console.log('📧 Resposta do Resend para admin:', emailResponse);
+        
+        if (emailResponse.error) {
+          throw new Error(`Resend API Error: ${JSON.stringify(emailResponse.error)}`);
+        }
+        
         await logNotification(id_orcamento, 'email_admin');
         results.email_admin = true;
-        console.log('✅ Email admin enviado');
+        console.log('✅ Email admin enviado com sucesso - ID:', emailResponse.data?.id);
       } catch (error) {
-        console.error('❌ Erro ao enviar email admin:', error);
-        await logNotification(id_orcamento, 'email_admin', 'falhou');
+        console.error('❌ Erro detalhado ao enviar email admin:', error);
+        console.error('❌ Stack trace:', error.stack);
+        await logNotification(id_orcamento, 'email_admin', 'falhou', error.message);
       }
     } else {
       console.log('ℹ️ Email admin já enviado anteriormente');
@@ -284,7 +301,7 @@ serve(async (req) => {
         console.log('✅ WhatsApp admin enviado');
       } catch (error) {
         console.error('❌ Erro ao enviar WhatsApp admin:', error);
-        await logNotification(id_orcamento, 'whatsapp_admin', 'falhou');
+        await logNotification(id_orcamento, 'whatsapp_admin', 'falhou', error.message);
       }
     } else {
       console.log('ℹ️ WhatsApp admin já enviado anteriormente');

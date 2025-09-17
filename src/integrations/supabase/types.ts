@@ -255,7 +255,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_view_orcamento: {
+        Args: { _orcamento_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       arvore_tamanho: "ate_1m" | "ate_1_5m" | "ate_2m" | "acima_2m"

@@ -17,7 +17,7 @@ export interface OrcamentoDetail {
   valor: string;
 }
 
-export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'presentes') => {
+export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'presentes', idOrcamento?: string) => {
   const [budget, setBudget] = useState<OrcamentoBudget | null>(null);
   const [details, setDetails] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
@@ -33,18 +33,37 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
       setLoading(true);
       setError(null);
 
-      // Try to find existing draft (idempotent and safe with StrictMode)
-      const { data: existingBudget, error: findError } = await supabase
-        .from('orcamentos')
-        .select('*')
-        .eq('id_cliente', user.id)
-        .eq('categoria', categoria)
-        .eq('is_draft', true)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+      let currentBudget = null;
 
-      let currentBudget = existingBudget;
+      // If specific ID provided, load that budget
+      if (idOrcamento) {
+        const { data: specificBudget, error: specificError } = await supabase
+          .from('orcamentos')
+          .select('*')
+          .eq('id_orcamento', idOrcamento)
+          .eq('id_cliente', user.id)
+          .single();
+
+        if (specificError) throw specificError;
+        currentBudget = specificBudget;
+      } else {
+        // Try to find existing draft (idempotent and safe with StrictMode)
+        const { data: existingBudget, error: findError } = await supabase
+          .from('orcamentos')
+          .select('*')
+          .eq('id_cliente', user.id)
+          .eq('categoria', categoria)
+          .eq('is_draft', true)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        currentBudget = existingBudget;
+
+        if (!currentBudget && findError) {
+          throw findError;
+        }
+      }
 
       if (!currentBudget) {
         // Attempt to create a new draft
@@ -79,8 +98,6 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
         } else {
           currentBudget = newBudget;
         }
-      } else if (findError) {
-        throw findError;
       }
 
       setBudget(currentBudget);
@@ -253,7 +270,7 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
     if (user) {
       loadOrCreateBudget();
     }
-  }, [user, categoria]);
+  }, [user, categoria, idOrcamento]);
 
   return {
     budget,

@@ -23,7 +23,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useOrcamentoBudget } from '@/hooks/useOrcamentoBudget';
+import { useOrcamentoRelated } from '@/hooks/useOrcamentoRelated';
 import { AISuggestions } from '@/components/AISuggestions';
+import { LinkedBudgets } from '@/components/LinkedBudgets';
 import { cn } from '@/lib/utils';
 
 const eventoTipos = [
@@ -84,6 +86,7 @@ type FormData = z.infer<typeof formSchema>;
 export const OrcamentoDecoracao = () => {
   const navigate = useNavigate();
   const { budget, details, loading, saving, error, saveDraft, finalizeBudget, deleteDetails } = useOrcamentoBudget('decoracao');
+  const { finalizeAndCreateLinked } = useOrcamentoRelated();
   const [showContinueOptions, setShowContinueOptions] = useState(false);
 
   const form = useForm<FormData>({
@@ -177,14 +180,24 @@ export const OrcamentoDecoracao = () => {
     const isValid = await form.trigger();
     if (!isValid) return;
 
-    const formData = form.getValues();
-    const stringData = getFormDataAsStrings(formData);
-    await saveDraft(stringData);
+    try {
+      const formData = form.getValues();
+      const stringData = getFormDataAsStrings(formData);
 
-    if (incluirLembrancinhas === 'sim') {
-      navigate(`/orcamento/lembrancinhas?id_orcamento=${budget?.id_orcamento}`);
-    } else {
-      setShowContinueOptions(true);
+      if (incluirLembrancinhas === 'sim') {
+        // Finalize current budget and create linked budget for lembrancinhas
+        const newBudgetId = await finalizeAndCreateLinked(
+          budget!.id_orcamento,
+          stringData,
+          'lembrancinhas'
+        );
+        navigate(`/orcamento/lembrancinhas?id_orcamento=${newBudgetId}`);
+      } else {
+        await saveDraft(stringData);
+        setShowContinueOptions(true);
+      }
+    } catch (error) {
+      // Error handling is done in the hooks
     }
   };
 
@@ -202,8 +215,21 @@ export const OrcamentoDecoracao = () => {
     }
   };
 
-  const handleContinueToPresents = () => {
-    navigate(`/orcamento/presentes?id_orcamento=${budget?.id_orcamento}`);
+  const handleContinueToPresents = async () => {
+    try {
+      const formData = form.getValues();
+      const stringData = getFormDataAsStrings(formData);
+      
+      // Finalize current budget and create linked budget for presentes
+      const newBudgetId = await finalizeAndCreateLinked(
+        budget!.id_orcamento,
+        stringData,
+        'presentes'
+      );
+      navigate(`/orcamento/presentes?id_orcamento=${newBudgetId}`);
+    } catch (error) {
+      // Error handling is done in the hooks
+    }
   };
 
   if (loading) {
@@ -251,6 +277,13 @@ export const OrcamentoDecoracao = () => {
                 Preencha os detalhes do seu evento para recebermos um orçamento personalizado
               </p>
             </div>
+
+            {budget && (
+              <LinkedBudgets 
+                currentBudgetId={budget.id_orcamento} 
+                currentCategory="decoracao" 
+              />
+            )}
 
             <Form {...form}>
               <div className="space-y-6">

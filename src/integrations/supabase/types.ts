@@ -170,6 +170,7 @@ export type Database = {
           data_envio: string
           id_cliente: string
           id_orcamento: string
+          id_orcamento_vinculado: string | null
           is_draft: boolean | null
           status: Database["public"]["Enums"]["status_orcamento"]
           updated_at: string
@@ -180,6 +181,7 @@ export type Database = {
           data_envio?: string
           id_cliente: string
           id_orcamento?: string
+          id_orcamento_vinculado?: string | null
           is_draft?: boolean | null
           status?: Database["public"]["Enums"]["status_orcamento"]
           updated_at?: string
@@ -190,6 +192,7 @@ export type Database = {
           data_envio?: string
           id_cliente?: string
           id_orcamento?: string
+          id_orcamento_vinculado?: string | null
           is_draft?: boolean | null
           status?: Database["public"]["Enums"]["status_orcamento"]
           updated_at?: string
@@ -201,6 +204,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "orcamentos_id_orcamento_vinculado_fkey"
+            columns: ["id_orcamento_vinculado"]
+            isOneToOne: false
+            referencedRelation: "orcamentos"
+            referencedColumns: ["id_orcamento"]
           },
         ]
       }

@@ -6,6 +6,7 @@ import { AuthGuard } from "@/components/AuthGuard";
 import Header from "@/components/Header";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { AISuggestions } from "@/components/AISuggestions";
+import { LinkedBudgets } from "@/components/LinkedBudgets";
 import { useOrcamentoBudget } from "@/hooks/useOrcamentoBudget";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -79,7 +80,7 @@ const OrcamentoLembrancinhas = () => {
     finalizeBudget,
     saveDetail,
     deleteDetails,
-  } = useOrcamentoBudget("lembrancinhas");
+  } = useOrcamentoBudget("lembrancinhas", budgetId || undefined);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -308,6 +309,13 @@ const OrcamentoLembrancinhas = () => {
                 Preencha os detalhes para seu orçamento de lembrancinhas
               </p>
             </div>
+
+            {budget && (
+              <LinkedBudgets 
+                currentBudgetId={budget.id_orcamento} 
+                currentCategory="lembrancinhas" 
+              />
+            )}
 
             <Card>
               <CardHeader>

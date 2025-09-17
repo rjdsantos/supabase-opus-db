@@ -72,6 +72,18 @@ export const useOrcamentos = () => {
 
       if (logError) throw logError;
 
+      // Se status mudou para concluído, disparar notificação de avaliação
+      if (newStatus === 'concluido') {
+        try {
+          await supabase.functions.invoke('notify-convite-avaliacao', {
+            body: { id_orcamento, send_whatsapp: false }
+          });
+          console.log('Convite de avaliação enviado para:', id_orcamento);
+        } catch (notificationError) {
+          console.error('Erro ao enviar convite de avaliação:', notificationError);
+        }
+      }
+
       // Update local state
       setOrcamentos(prev => 
         prev.map(orc => 
@@ -81,9 +93,13 @@ export const useOrcamentos = () => {
         )
       );
 
+      const statusMessage = newStatus === 'concluido' 
+        ? "Status atualizado e convite de avaliação enviado ao cliente."
+        : "Status do orçamento alterado com sucesso.";
+
       toast({
         title: "Status atualizado",
-        description: "Status do orçamento alterado com sucesso.",
+        description: statusMessage,
       });
 
     } catch (error: any) {

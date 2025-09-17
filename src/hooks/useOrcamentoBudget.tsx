@@ -309,21 +309,16 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
         );
       }
 
-      // Create notifications
-      const notificationPromises = [
-        supabase.from('notificacoes').insert({
-          id_orcamento: current.id_orcamento,
-          tipo: 'email_cliente',
-          status_envio: 'pendente',
-        }),
-        supabase.from('notificacoes').insert({
-          id_orcamento: current.id_orcamento,
-          tipo: 'email_admin',
-          status_envio: 'pendente',
-        }),
-      ];
-
-      await Promise.all(notificationPromises);
+      // Trigger notifications asynchronously
+      try {
+        await supabase.functions.invoke('notify-orcamento-finalizado', {
+          body: { id_orcamento: current.id_orcamento }
+        });
+        console.log('Notificações disparadas para orçamento:', current.id_orcamento);
+      } catch (notificationError) {
+        console.error('Erro ao enviar notificações:', notificationError);
+        // Não bloqueia o fluxo principal se notificações falharem
+      }
 
       toast({
         title: 'Orçamento finalizado',

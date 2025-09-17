@@ -10,9 +10,12 @@ import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useNotifications } from '@/hooks/useNotifications';
 
 interface BudgetInfo {
   id_orcamento: string;
@@ -31,6 +34,11 @@ export const OrcamentoConfirmacao = () => {
   const [budget, setBudget] = useState<BudgetInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [scheduleDate, setScheduleDate] = useState('');
+  const [scheduleTime, setScheduleTime] = useState('');
+  const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
+  
+  const { notifyPreOrcamento, notifyAgendamento, loading: notificationLoading } = useNotifications();
 
   useEffect(() => {
     const loadBudget = async () => {
@@ -82,16 +90,29 @@ export const OrcamentoConfirmacao = () => {
     return labels[categoria] || categoria;
   };
 
-  const handleScheduleEvent = () => {
-    // Placeholder for calendar integration
-    // TODO: Implement calendar scheduling integration
-    alert('Funcionalidade de agendamento em desenvolvimento');
+  const handleScheduleEvent = async () => {
+    if (!scheduleDate || !scheduleTime || !budget) return;
+    
+    const datetime = `${scheduleDate}T${scheduleTime}:00`;
+    
+    try {
+      // Send notifications
+      const success = await notifyAgendamento(budget.id_orcamento, datetime);
+      
+      if (success) {
+        setScheduleDialogOpen(false);
+        setScheduleDate('');
+        setScheduleTime('');
+      }
+    } catch (error) {
+      console.error('Erro ao agendar reunião:', error);
+    }
   };
 
-  const handlePreBudget = () => {
-    // Placeholder for pre-budget functionality
-    // TODO: Implement pre-budget sending functionality
-    alert('Funcionalidade de pré-orçamento em desenvolvimento');
+  const handlePreBudget = async () => {
+    if (!budget) return;
+    
+    await notifyPreOrcamento(budget.id_orcamento);
   };
 
   const handleBackToDashboard = () => {
@@ -237,9 +258,46 @@ export const OrcamentoConfirmacao = () => {
                             Marque uma conversa para discutir detalhes
                           </p>
                         </div>
-                        <Button onClick={handleScheduleEvent} className="w-full">
-                          Agendar Reunião
-                        </Button>
+                        <Dialog open={scheduleDialogOpen} onOpenChange={setScheduleDialogOpen}>
+                          <DialogTrigger asChild>
+                            <Button className="w-full">Agendar Reunião</Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Agendar Reunião</DialogTitle>
+                              <DialogDescription>
+                                Escolha data e horário para nossa conversa
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                              <div>
+                                <Label htmlFor="date">Data</Label>
+                                <Input
+                                  id="date"
+                                  type="date"
+                                  value={scheduleDate}
+                                  onChange={(e) => setScheduleDate(e.target.value)}
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="time">Horário</Label>
+                                <Input
+                                  id="time"
+                                  type="time"
+                                  value={scheduleTime}
+                                  onChange={(e) => setScheduleTime(e.target.value)}
+                                />
+                              </div>
+                              <Button 
+                                onClick={handleScheduleEvent} 
+                                disabled={!scheduleDate || !scheduleTime || notificationLoading}
+                                className="w-full"
+                              >
+                                {notificationLoading ? 'Agendando...' : 'Confirmar Agendamento'}
+                              </Button>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
                       </div>
                     </CardContent>
                   </Card>
@@ -254,8 +312,13 @@ export const OrcamentoConfirmacao = () => {
                             Receba uma estimativa rápida por WhatsApp
                           </p>
                         </div>
-                        <Button onClick={handlePreBudget} variant="outline" className="w-full">
-                          Solicitar Pré-orçamento
+                        <Button 
+                          onClick={handlePreBudget} 
+                          variant="outline" 
+                          className="w-full"
+                          disabled={notificationLoading}
+                        >
+                          {notificationLoading ? 'Enviando...' : 'Solicitar Pré-orçamento'}
                         </Button>
                       </div>
                     </CardContent>

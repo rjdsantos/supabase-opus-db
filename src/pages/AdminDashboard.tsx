@@ -53,42 +53,10 @@ const AdminDashboard = () => {
     navigate(`/admin/orcamentos/${id_orcamento}`);
   };
 
-  // Real-time subscriptions for live updates
+  // Real-time updates are handled by the useOrcamentos hook
   useEffect(() => {
-    fetchOrcamentos();
-
-    const channel = supabase
-      .channel('admin-orcamentos-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'orcamentos'
-        },
-        () => {
-          console.log('Orçamento updated, refreshing data...');
-          fetchOrcamentos();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*', 
-          schema: 'public',
-          table: 'admin_status'
-        },
-        () => {
-          console.log('Status updated, refreshing data...');
-          fetchOrcamentos();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [fetchOrcamentos]);
+    // Initial data load is handled by the useOrcamentos hook
+  }, []);
 
   if (loading) {
     return (

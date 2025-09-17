@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -16,7 +16,7 @@ export const useOrcamentos = () => {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const fetchOrcamentos = async () => {
+  const fetchOrcamentos = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -50,7 +50,7 @@ export const useOrcamentos = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const updateStatus = async (id_orcamento: string, newStatus: 'novo' | 'respondido' | 'concluido') => {
     try {
@@ -134,7 +134,7 @@ export const useOrcamentos = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [fetchOrcamentos]);
 
   return {
     orcamentos,

@@ -127,7 +127,11 @@ const ClientDashboard = () => {
   };
 
   const handleContinueDraft = (draft: OrcamentoDraft) => {
-    navigate(`/orcamento/${draft.categoria}`);
+    if (draft.is_draft) {
+      navigate(`/orcamento/${draft.categoria}`);
+    } else {
+      navigate(`/orcamento/confirmacao?id_orcamento=${draft.id_orcamento}`);
+    }
   };
 
   const getFirstName = (fullName: string) => {

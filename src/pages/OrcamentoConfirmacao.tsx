@@ -34,9 +34,14 @@ export const OrcamentoConfirmacao = () => {
 
   useEffect(() => {
     const loadBudget = async () => {
-      if (!budgetId || !user) {
+      if (!budgetId) {
         setError('Orçamento não encontrado');
         setLoading(false);
+        return;
+      }
+
+      // Aguarda autenticação antes de buscar os dados
+      if (!user) {
         return;
       }
 

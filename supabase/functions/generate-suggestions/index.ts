@@ -57,8 +57,22 @@ Gere 3 sugestões criativas e detalhadas de como o cliente pode descrever seu ev
 - Sensações que quer transmitir
 
 Cada sugestão deve ter entre 50-100 palavras e ser inspiradora mas prática.`;
+    } else if (campo === 'orientacoes_adicionais' && budget.categoria === 'presentes') {
+      prompt = `Você é uma especialista em presentes especiais e personalizados. Ajude o cliente a detalhar melhor suas orientações para criar o presente perfeito.
+
+Contexto do presente:
+- Tipo: ${context.tipo_presente || 'não informado'}
+- Data de entrega: ${context.data_entrega || 'não informada'}
+
+Gere 3 sugestões criativas e práticas para orientações adicionais, incluindo:
+- Personalização específica (cores, temas, preferências)
+- Ocasião e significado especial
+- Detalhes sobre a pessoa que receberá
+- Elementos únicos que tornem o presente memorável
+
+Cada sugestão deve ter entre 40-80 palavras e ser inspiradora mas aplicável.`;
     } else {
-      prompt = `Ajude o cliente a preencher o campo "${campo}" do seu orçamento de ${context.categoria}. Gere 3 sugestões úteis e criativas baseadas no contexto fornecido.`;
+      prompt = `Ajude o cliente a preencher o campo "${campo}" do seu orçamento de ${budget.categoria}. Gere 3 sugestões úteis e criativas baseadas no contexto fornecido: ${JSON.stringify(context)}.`;
     }
 
     // Call OpenAI API
@@ -73,7 +87,7 @@ Cada sugestão deve ter entre 50-100 palavras e ser inspiradora mas prática.`;
         messages: [
           {
             role: 'system',
-            content: 'Você é uma consultora especialista em eventos e decoração. Forneça sugestões práticas, criativas e profissionais em português brasileiro.'
+            content: 'Você é uma consultora especialista em eventos, decoração e presentes personalizados. Forneça sugestões práticas, criativas e profissionais em português brasileiro.'
           },
           {
             role: 'user',

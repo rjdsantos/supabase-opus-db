@@ -17,7 +17,7 @@ export interface OrcamentoDetail {
   valor: string;
 }
 
-export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'presentes', idOrcamento?: string) => {
+export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'presentes', idOrcamento?: string | null) => {
   const [budget, setBudget] = useState<OrcamentoBudget | null>(null);
   const [details, setDetails] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
@@ -66,6 +66,23 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
       }
 
       if (!currentBudget) {
+        // Check if there's a linked budget from another category that we should connect to
+        let linkedBudgetId = null;
+        
+        if (idOrcamento) {
+          // If we have an ID from URL, try to find if it's a different category
+          const { data: existingBudget } = await supabase
+            .from('orcamentos')
+            .select('id_orcamento, categoria')
+            .eq('id_orcamento', idOrcamento)
+            .eq('id_cliente', user.id)
+            .single();
+            
+          if (existingBudget && existingBudget.categoria !== categoria) {
+            linkedBudgetId = existingBudget.id_orcamento;
+          }
+        }
+
         // Attempt to create a new draft
         const { data: newBudget, error: createError } = await supabase
           .from('orcamentos')
@@ -73,7 +90,8 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
             id_cliente: user.id,
             categoria,
             status: 'novo',
-            is_draft: true
+            is_draft: true,
+            id_orcamento_vinculado: linkedBudgetId
           })
           .select()
           .single();
@@ -215,6 +233,22 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
 
       // If there is no budget yet, create a finalized one immediately
       if (!current) {
+        // Check if there's a linked budget from another category
+        let linkedBudgetId = null;
+        
+        // Look for any existing budget for this user that could be linked
+        const { data: existingBudgets } = await supabase
+          .from('orcamentos')
+          .select('id_orcamento, categoria')
+          .eq('id_cliente', user.id)
+          .neq('categoria', categoria)
+          .order('created_at', { ascending: false })
+          .limit(1);
+          
+        if (existingBudgets && existingBudgets.length > 0) {
+          linkedBudgetId = existingBudgets[0].id_orcamento;
+        }
+
         const { data: newBudget, error: createError } = await supabase
           .from('orcamentos')
           .insert({
@@ -223,6 +257,7 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
             status: 'novo',
             is_draft: false,
             data_envio: now,
+            id_orcamento_vinculado: linkedBudgetId
           })
           .select()
           .single();

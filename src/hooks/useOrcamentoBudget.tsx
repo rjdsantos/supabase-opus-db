@@ -203,7 +203,9 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
   };
 
   const finalizeBudget = async (formData: Record<string, string>) => {
-    if (!budget) return;
+    if (!budget) {
+      throw new Error('Orçamento não encontrado');
+    }
 
     try {
       setSaving(true);

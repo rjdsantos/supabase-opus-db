@@ -53,14 +53,15 @@ const AdminOrcamentoDetail = () => {
 
       // Fetch orçamento with client info
       const { data: orcamentoData, error: orcamentoError } = await supabase
-        .from('orcamentos')
+        .from('orcamentos_with_client')
         .select(`
           id_orcamento,
           categoria,
           status,
           data_envio,
-          id_cliente,
-          profiles:id_cliente(full_name, email, phone)
+          cliente_nome,
+          cliente_email,
+          cliente_telefone
         `)
         .eq('id_orcamento', id)
         .single();
@@ -92,9 +93,9 @@ const AdminOrcamentoDetail = () => {
         categoria: orcamentoData.categoria,
         status: orcamentoData.status,
         data_envio: orcamentoData.data_envio,
-        cliente_nome: orcamentoData.profiles?.full_name || 'Nome não informado',
-        cliente_email: orcamentoData.profiles?.email || '',
-        cliente_telefone: orcamentoData.profiles?.phone || '',
+        cliente_nome: orcamentoData.cliente_nome || 'Nome não informado',
+        cliente_email: orcamentoData.cliente_email || '',
+        cliente_telefone: orcamentoData.cliente_telefone || '',
         detalhes: detalhesData || [],
       };
 

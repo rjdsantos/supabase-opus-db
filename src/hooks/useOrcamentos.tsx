@@ -22,14 +22,15 @@ export const useOrcamentos = () => {
       setError(null);
       
       const { data, error } = await supabase
-        .from('orcamentos')
+        .from('orcamentos_with_client')
         .select(`
           id_orcamento,
-          categoria,  
+          categoria,
           status,
           data_envio,
-          id_cliente,
-          profiles:id_cliente(full_name, email, phone)
+          cliente_nome,
+          cliente_email,
+          cliente_telefone
         `)
         .eq('is_draft', false)
         .order('data_envio', { ascending: false });
@@ -41,7 +42,7 @@ export const useOrcamentos = () => {
         categoria: item.categoria,
         status: item.status,
         data_envio: item.data_envio,
-        cliente_nome: item.profiles?.full_name || 'Nome não informado',
+        cliente_nome: item.cliente_nome || 'Nome não informado',
       }));
 
       setOrcamentos(mappedData);

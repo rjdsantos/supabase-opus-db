@@ -311,6 +311,10 @@ export type Database = {
         Args: { _orcamento_id: string }
         Returns: boolean
       }
+      is_current_user_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       arvore_tamanho: "ate_1m" | "ate_1_5m" | "ate_2m" | "acima_2m"

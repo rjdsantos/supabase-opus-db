@@ -36,6 +36,8 @@ export const useOrcamentos = () => {
         .order('data_envio', { ascending: false });
 
       if (error) throw error;
+      
+      console.log('Raw data from orcamentos_with_client:', data);
 
       const mappedData: Orcamento[] = data.map((item: any) => ({
         id_orcamento: item.id_orcamento,

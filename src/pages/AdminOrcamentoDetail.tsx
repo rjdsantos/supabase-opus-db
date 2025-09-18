@@ -68,6 +68,8 @@ const AdminOrcamentoDetail = () => {
 
       if (orcamentoError) throw orcamentoError;
       if (!orcamentoData) throw new Error('Orçamento não encontrado');
+      
+      console.log('Orcamento data fetched:', orcamentoData);
 
       // Fetch orçamento details
       const { data: detalhesData, error: detalhesError } = await supabase
@@ -77,6 +79,8 @@ const AdminOrcamentoDetail = () => {
         .order('chave');
 
       if (detalhesError) throw detalhesError;
+      
+      console.log('Detalhes data fetched:', detalhesData);
 
       // Fetch status history
       const { data: statusData, error: statusError } = await supabase

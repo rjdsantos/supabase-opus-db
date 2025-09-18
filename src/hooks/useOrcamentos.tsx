@@ -25,10 +25,11 @@ export const useOrcamentos = () => {
         .from('orcamentos')
         .select(`
           id_orcamento,
-          categoria,
+          categoria,  
           status,
           data_envio,
-          profiles!fk_orcamentos_cliente(full_name)
+          id_cliente,
+          profiles:id_cliente(full_name, email, phone)
         `)
         .eq('is_draft', false)
         .order('data_envio', { ascending: false });

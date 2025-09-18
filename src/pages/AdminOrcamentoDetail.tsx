@@ -59,7 +59,8 @@ const AdminOrcamentoDetail = () => {
           categoria,
           status,
           data_envio,
-          profiles!fk_orcamentos_cliente(full_name, email, phone)
+          id_cliente,
+          profiles:id_cliente(full_name, email, phone)
         `)
         .eq('id_orcamento', id)
         .single();

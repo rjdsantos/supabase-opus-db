@@ -5,6 +5,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import AdminLogin from "./pages/AdminLogin";
 import ClientDashboard from "./pages/ClientDashboard";
+import ClientOrcamentoDetail from "./pages/ClientOrcamentoDetail";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminOrcamentoDetail from "./pages/AdminOrcamentoDetail";
 import OrcamentoDecoracao from "./pages/OrcamentoDecoracao";
@@ -21,6 +22,7 @@ const App = () => (
         <Route path="/login" element={<Login />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/orcamentos" element={<ClientDashboard />} />
+        <Route path="/orcamentos/:id" element={<ClientOrcamentoDetail />} />
         <Route path="/admin/orcamentos" element={<AdminDashboard />} />
         <Route path="/admin/orcamentos/:id" element={<AdminOrcamentoDetail />} />
         <Route path="/orcamento/decoracao" element={<OrcamentoDecoracao />} />

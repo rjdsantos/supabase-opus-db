@@ -130,7 +130,7 @@ const ClientDashboard = () => {
     if (draft.is_draft) {
       navigate(`/orcamento/${draft.categoria}`);
     } else {
-      navigate(`/orcamento/confirmacao?id_orcamento=${draft.id_orcamento}`);
+      navigate(`/orcamentos/${draft.id_orcamento}`);
     }
   };
 

@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import { KeyValueList } from '@/components/KeyValueList';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -23,6 +24,7 @@ interface BudgetInfo {
   status: string;
   data_envio: string;
   is_draft: boolean;
+  detalhes: Array<{ chave: string; valor: string }>;
 }
 
 export const OrcamentoConfirmacao = () => {
@@ -69,7 +71,19 @@ export const OrcamentoConfirmacao = () => {
           return;
         }
 
-        setBudget(data);
+        // Fetch budget details
+        const { data: detalhesData, error: detalhesError } = await supabase
+          .from('orcamento_detalhes')
+          .select('chave, valor')
+          .eq('id_orcamento', budgetId)
+          .order('chave');
+
+        if (detalhesError) throw detalhesError;
+
+        setBudget({
+          ...data,
+          detalhes: detalhesData || []
+        });
       } catch (error: any) {
         console.error('Error loading budget:', error);
         setError('Erro ao carregar informações do orçamento');
@@ -237,6 +251,12 @@ export const OrcamentoConfirmacao = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Budget Details */}
+            <KeyValueList 
+              title="Detalhes do Seu Orçamento" 
+              items={budget.detalhes}
+            />
 
             {/* Next Steps */}
             <Card>

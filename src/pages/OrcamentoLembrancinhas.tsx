@@ -119,6 +119,18 @@ const OrcamentoLembrancinhas = () => {
       if (details.data_entrega) {
         setSelectedDate(new Date(details.data_entrega));
       }
+    } else {
+      // Initialize with empty values to avoid uncontrolled to controlled warning
+      setFormData({
+        data_entrega: "",
+        tipo_evento: "",
+        quantidade: "",
+        tema_cor_desejada: "",
+        incluir_presentes_especiais: "",
+        estilo_outra_opcao_texto: "",
+      });
+      setSelectedStyles({});
+      setSelectedDate(undefined);
     }
   }, [details]);
 

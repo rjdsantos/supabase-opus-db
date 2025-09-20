@@ -61,12 +61,20 @@ const OrcamentoPresentes = () => {
 
   // Carregar dados do orçamento ao montar o componente
   useEffect(() => {
-    if (details) {
+    if (details && Object.keys(details).length > 0) {
       setFormData({
         data_entrega: details.data_entrega ? new Date(details.data_entrega) : undefined,
         tipo_presente: details.tipo_presente || "",
         tipo_presente_outra_opcao_texto: details.tipo_presente_outra_opcao_texto || "",
         orientacoes_adicionais: details.orientacoes_adicionais || ""
+      });
+    } else {
+      // Initialize with default values to avoid uncontrolled to controlled warning
+      setFormData({
+        data_entrega: undefined,
+        tipo_presente: "",
+        tipo_presente_outra_opcao_texto: "",
+        orientacoes_adicionais: ""
       });
     }
   }, [details]);

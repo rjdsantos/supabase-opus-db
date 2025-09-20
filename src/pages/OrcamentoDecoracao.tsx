@@ -112,17 +112,27 @@ export const OrcamentoDecoracao = () => {
   // Load saved details into form
   useEffect(() => {
     if (details && Object.keys(details).length > 0) {
-      const formData: any = {};
+      const formData: any = {
+        tipo_evento: details.tipo_evento || '',
+        arvore_montagem_apenas: details.arvore_montagem_apenas || '',
+        arvore_tamanho: details.arvore_tamanho || '',
+        n_convidados: details.n_convidados || '',
+        mesa_principal: details.mesa_principal === 'true',
+        centro_mesa: details.centro_mesa === 'true',
+        mesa_buffet: details.mesa_buffet === 'true',
+        painel_instagramavel: details.painel_instagramavel === 'true',
+        baloes: details.baloes === 'true',
+        descricao_evento: details.descricao_evento || '',
+        incluir_lembrancinhas: details.incluir_lembrancinhas || ''
+      };
       
-      Object.entries(details).forEach(([key, value]) => {
-        if (key === 'arvore_data_sugerida' || key === 'data_evento') {
-          formData[key] = value ? new Date(value) : undefined;
-        } else if (decorationItems.some(item => item.key === key)) {
-          formData[key] = value === 'true';
-        } else {
-          formData[key] = value;
-        }
-      });
+      // Handle dates
+      if (details.arvore_data_sugerida) {
+        formData.arvore_data_sugerida = new Date(details.arvore_data_sugerida);
+      }
+      if (details.data_evento) {
+        formData.data_evento = new Date(details.data_evento);
+      }
 
       form.reset(formData);
     }

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 const WhatsAppButton = () => {
   // Configure seu número do WhatsApp aqui:
-  const whatsappNumber = "+5511912345678"; // Substitua pelo seu número real
+  const whatsappNumber = "+5516994611877"; // Substitua pelo seu número real
 
   const handleWhatsAppClick = () => {
     if (!whatsappNumber) return;

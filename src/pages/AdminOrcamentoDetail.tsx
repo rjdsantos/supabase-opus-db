@@ -15,6 +15,9 @@ import AuthGuard from '@/components/AuthGuard';
 import Header from '@/components/Header';
 import { StatusTimeline } from '@/components/StatusTimeline';
 import { KeyValueList } from '@/components/KeyValueList';
+import DecoracaoDetails from '@/components/DecoracaoDetails';
+import LembrancinhasDetails from '@/components/LembrancinhasDetails';
+import PresentesDetails from '@/components/PresentesDetails';
 import { supabase } from '@/integrations/supabase/client';
 
 interface OrcamentoDetail {
@@ -453,10 +456,19 @@ const AdminOrcamentoDetail = () => {
               </Card>
 
               {/* Details Card */}
-              <KeyValueList 
-                title="Detalhes do Orçamento"
-                items={orcamento.detalhes}
-              />
+              <Card className="rounded-2xl">
+                <CardHeader>
+                  <CardTitle className="text-lg">Detalhes do Orçamento</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {orcamento.categoria === 'decoracao' && <DecoracaoDetails detalhes={orcamento.detalhes} />}
+                  {orcamento.categoria === 'lembrancinhas' && <LembrancinhasDetails detalhes={orcamento.detalhes} />}
+                  {orcamento.categoria === 'presentes' && <PresentesDetails detalhes={orcamento.detalhes} />}
+                  {!['decoracao', 'lembrancinhas', 'presentes'].includes(orcamento.categoria) && (
+                    <KeyValueList title="" items={orcamento.detalhes} />
+                  )}
+                </CardContent>
+              </Card>
 
               {/* Status Timeline Card */}
               <StatusTimeline statusHistory={statusHistory} />

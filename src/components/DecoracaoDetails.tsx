@@ -104,26 +104,24 @@ const DecoracaoDetails = ({ detalhes }: DecoracaoDetailsProps) => {
         {/* Guests and Decorations */}
         <div className="space-y-6">
           {/* Number of Guests */}
-          {quantidadeConvidados && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Users className="h-5 w-5" />
-                  Convidados
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary">
-                    {quantidadeConvidados}
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    pessoas convidadas
-                  </p>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Users className="h-5 w-5" />
+                Convidados
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary">
+                  {quantidadeConvidados || '0'}
                 </div>
-              </CardContent>
-            </Card>
-           )}
+                <p className="text-sm text-muted-foreground">
+                  pessoas convidadas
+                </p>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Lembrancinhas Section */}
           <Card>

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar as CalendarIcon, Users, Sparkles } from "lucide-react";
+import { Calendar as CalendarIcon, Users, Sparkles, Gift } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 
 interface DecoracaoDetailsProps {
@@ -32,7 +32,10 @@ const DecoracaoDetails = ({ detalhes }: DecoracaoDetailsProps) => {
   // Get event description
   const descricaoEvento = getDetalhe('descricaoEvento') || getDetalhe('descricao_evento') || getDetalhe('descricao');
 
-  // Get included decorations (filter out false values)
+  // Get lembrancinhas status
+  const incluirLembrancinhas = getDetalhe('incluirLembrancinhas') || getDetalhe('incluir_lembrancinhas');
+
+  // Get included decorations (filter out false values and exclude other fields)
   const decoracaoItems = detalhes.filter(d => 
     d.chave !== 'tipoEvento' && 
     d.chave !== 'tipo_evento' &&
@@ -43,6 +46,8 @@ const DecoracaoDetails = ({ detalhes }: DecoracaoDetailsProps) => {
     d.chave !== 'descricaoEvento' && 
     d.chave !== 'descricao_evento' &&
     d.chave !== 'descricao' &&
+    d.chave !== 'incluirLembrancinhas' &&
+    d.chave !== 'incluir_lembrancinhas' &&
     shouldShowDetail(d.chave)
   );
 
@@ -118,7 +123,29 @@ const DecoracaoDetails = ({ detalhes }: DecoracaoDetailsProps) => {
                 </div>
               </CardContent>
             </Card>
-          )}
+           )}
+
+          {/* Lembrancinhas Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Gift className="h-5 w-5" />
+                Lembrancinhas
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-muted/50 rounded-lg p-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  <span className="text-sm font-medium">
+                    {incluirLembrancinhas && incluirLembrancinhas.toLowerCase() !== 'false' 
+                      ? 'Incluído no orçamento' 
+                      : 'Não incluído no orçamento'}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Included Decorations */}
           {decoracaoItems.length > 0 && (

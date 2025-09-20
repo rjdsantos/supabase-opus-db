@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar as CalendarIcon, Users, Gift, Palette, Star, CheckCircle } from "lucide-react";
+import { Calendar as CalendarIcon, Users, Gift, Palette, Star } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 
 interface LembrancinhasDetailsProps {
@@ -45,100 +45,84 @@ const LembrancinhasDetails = ({ detalhes }: LembrancinhasDetailsProps) => {
   const estilosArray = estilosSelecionados ? estilosSelecionados.split(',').map(s => s.trim()).filter(s => s) : [];
 
   return (
-    <div className="space-y-8">
-      {/* Event Type Header - Elegant Hero Section */}
-      <Card className="bg-gradient-to-r from-primary/5 to-secondary/5 border-none shadow-lg">
-        <CardHeader className="text-center py-8">
-          <div className="inline-flex items-center gap-3 justify-center">
-            <div className="p-3 bg-primary/10 rounded-full">
-              <Gift className="h-6 w-6 text-primary" />
-            </div>
-            <CardTitle className="text-2xl font-bold text-primary">
-              {tipoEvento}
-            </CardTitle>
-          </div>
-        </CardHeader>
-      </Card>
+    <div className="max-w-4xl mx-auto space-y-6">
+      {/* Event Type Header */}
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+          <Gift className="h-5 w-5 text-blue-600" />
+        </div>
+        <h1 className="text-2xl font-semibold text-foreground">{tipoEvento}</h1>
+      </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column - Event Date */}
         {dataEvento && (
-          <Card className="h-fit shadow-md border-l-4 border-l-primary">
+          <Card className="p-0">
             <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-3 text-xl">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <CalendarIcon className="h-5 w-5 text-primary" />
-                </div>
-                Data do Evento
+              <CardTitle className="flex items-center gap-3 text-lg font-medium">
+                <CalendarIcon className="h-5 w-5" />
+                Data Especial
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="flex flex-col items-center space-y-6">
-                <Calendar
-                  mode="single"
-                  selected={eventDate}
-                  className="rounded-lg border-2 border-primary/10"
-                  disabled={true}
-                />
-                {eventDate && (
-                  <div className="text-center p-4 bg-primary/5 rounded-lg w-full">
-                    <p className="text-lg font-semibold text-primary capitalize">
-                      {eventDate.toLocaleDateString('pt-BR', {
-                        weekday: 'long',
-                        day: '2-digit',
-                        month: 'long',
-                        year: 'numeric'
-                      })}
-                    </p>
-                  </div>
-                )}
-              </div>
+            <CardContent className="space-y-4">
+              <Calendar
+                mode="single"
+                selected={eventDate}
+                className="rounded-lg border w-full"
+                disabled={true}
+              />
+              {eventDate && (
+                <p className="text-sm font-medium text-center text-foreground">
+                  {eventDate.toLocaleDateString('pt-BR', {
+                    weekday: 'long',
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                  }).replace(/^\w/, c => c.toUpperCase())}
+                </p>
+              )}
             </CardContent>
           </Card>
         )}
 
-        {/* Right Column - Quantity and Features */}
+        {/* Right Column - Quantity and Special Gifts */}
         <div className="space-y-6">
           {/* Quantity Section */}
           {quantidade && (
-            <Card className="shadow-md border-l-4 border-l-secondary">
+            <Card className="p-0">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-3 text-xl">
-                  <div className="p-2 bg-secondary/10 rounded-lg">
-                    <Users className="h-5 w-5 text-secondary" />
-                  </div>
+                <CardTitle className="flex items-center gap-3 text-lg font-medium">
+                  <Users className="h-5 w-5" />
                   Quantidade
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center p-6 bg-secondary/5 rounded-lg">
-                  <div className="text-4xl font-bold text-secondary mb-2">
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-foreground mb-1">
                     {quantidade}
                   </div>
-                  <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                    unidades
+                  <p className="text-sm text-muted-foreground">
+                    unidade(s)
                   </p>
                 </div>
               </CardContent>
             </Card>
           )}
 
-          {/* Special Gifts Premium Card */}
+          {/* Special Gifts */}
           {shouldShowDetail('presentesEspeciais') || shouldShowDetail('presentes_especiais') ? (
-            <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200 shadow-lg">
+            <Card className="bg-orange-50 border-orange-200">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-3 text-xl text-amber-700">
-                  <div className="p-2 bg-amber-100 rounded-lg">
-                    <Star className="h-5 w-5 text-amber-600" />
-                  </div>
+                <CardTitle className="flex items-center gap-3 text-lg font-medium text-orange-700">
+                  <Gift className="h-5 w-5 text-orange-600" />
                   Presentes Especiais
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center gap-3 p-4 bg-amber-100/50 rounded-lg">
-                  <CheckCircle className="h-5 w-5 text-amber-600 flex-shrink-0" />
-                  <span className="font-medium text-amber-800">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <span className="text-sm font-medium text-orange-700">
                     Incluído no orçamento
                   </span>
                 </div>
@@ -148,24 +132,21 @@ const LembrancinhasDetails = ({ detalhes }: LembrancinhasDetailsProps) => {
         </div>
       </div>
 
-      {/* Selected Styles - Modern Grid Layout */}
+      {/* Selected Styles */}
       {estilosArray.length > 0 && (
-        <Card className="shadow-md">
-          <CardHeader className="border-b border-border/50">
-            <CardTitle className="flex items-center gap-3 text-xl">
-              <div className="p-2 bg-accent/50 rounded-lg">
-                <Palette className="h-5 w-5 text-accent-foreground" />
-              </div>
+        <Card className="p-0">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-medium">
               Estilos Selecionados
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-6">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
               {estilosArray.map((estilo, index) => (
                 <Badge 
                   key={index} 
                   variant="secondary" 
-                  className="text-sm py-2 px-4 justify-center font-medium hover:bg-secondary/80 transition-colors"
+                  className="text-sm py-1 px-3"
                 >
                   {estilo}
                 </Badge>
@@ -175,23 +156,18 @@ const LembrancinhasDetails = ({ detalhes }: LembrancinhasDetailsProps) => {
         </Card>
       )}
 
-      {/* Theme Description - Rich Content Card */}
+      {/* Theme Description */}
       {tema && (
-        <Card className="shadow-md">
-          <CardHeader className="border-b border-border/50">
-            <CardTitle className="flex items-center gap-3 text-xl">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Palette className="h-5 w-5 text-primary" />
-              </div>
-              Tema & Decoração
+        <Card className="p-0">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-medium">
+              Tema ou Decorado
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-6">
-            <div className="p-6 bg-muted/30 rounded-lg border-l-4 border-l-primary">
-              <p className="text-base leading-relaxed text-foreground">
-                {tema}
-              </p>
-            </div>
+          <CardContent>
+            <p className="text-sm text-foreground leading-relaxed">
+              {tema}
+            </p>
           </CardContent>
         </Card>
       )}

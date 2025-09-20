@@ -11,6 +11,7 @@ import AuthGuard from "@/components/AuthGuard";
 import Header from "@/components/Header";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { KeyValueList } from "@/components/KeyValueList";
+import DecoracaoDetails from "@/components/DecoracaoDetails";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -238,10 +239,14 @@ const ClientOrcamentoDetail = () => {
             </Card>
 
             {/* Budget Details */}
-            <KeyValueList 
-              title="Detalhes do Orçamento" 
-              items={orcamento.detalhes}
-            />
+            {orcamento.categoria === 'decoracao' ? (
+              <DecoracaoDetails detalhes={orcamento.detalhes} />
+            ) : (
+              <KeyValueList 
+                title="Detalhes do Orçamento" 
+                items={orcamento.detalhes}
+              />
+            )}
 
             {/* Actions */}
             {!orcamento.is_draft && (

@@ -1,22 +1,9 @@
 import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
 
 const WhatsAppButton = () => {
-  const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Try to get WhatsApp number from environment variable
-    const envNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
-    if (envNumber) {
-      setWhatsappNumber(envNumber);
-    } else {
-      // Fallback to a default number for demonstration
-      setWhatsappNumber("+5511912345678"); // Placeholder - should be configured in production
-    }
-    setIsLoading(false);
-  }, []);
+  // Configure seu número do WhatsApp aqui:
+  const whatsappNumber = "+5511912345678"; // Substitua pelo seu número real
 
   const handleWhatsAppClick = () => {
     if (!whatsappNumber) return;
@@ -27,10 +14,6 @@ const WhatsAppButton = () => {
     
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
-
-  if (isLoading) {
-    return null;
-  }
 
   return (
     <div className="fixed bottom-6 right-6 z-50">

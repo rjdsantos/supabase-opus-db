@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar as CalendarIcon, Users, Gift, Palette, Star } from "lucide-react";
+import { Calendar as CalendarIcon, Users, Gift, Palette } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 
 interface LembrancinhasDetailsProps {
@@ -86,51 +86,48 @@ const LembrancinhasDetails = ({ detalhes }: LembrancinhasDetailsProps) => {
           </Card>
         )}
 
-        {/* Right Column - Quantity and Special Gifts */}
-        <div className="space-y-6">
-          {/* Quantity Section */}
-          {quantidade && (
-            <Card className="p-0">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-3 text-lg font-medium">
-                  <Users className="h-5 w-5" />
-                  Quantidade
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-foreground mb-1">
-                    {quantidade}
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    unidade(s)
-                  </p>
+        {/* Right Column - Quantity */}
+        {quantidade && (
+          <Card className="p-0">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-3 text-lg font-medium">
+                <Users className="h-5 w-5" />
+                Quantidade
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-foreground mb-1">
+                  {quantidade}
                 </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Special Gifts */}
-          {shouldShowDetail('presentesEspeciais') || shouldShowDetail('presentes_especiais') ? (
-            <Card className="bg-orange-50 border-orange-200">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-3 text-lg font-medium text-orange-700">
-                  <Gift className="h-5 w-5 text-orange-600" />
-                  Presentes Especiais
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  <span className="text-sm font-medium text-orange-700">
-                    Incluído no orçamento
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          ) : null}
-        </div>
+                <p className="text-sm text-muted-foreground">
+                  unidade(s)
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
+
+      {/* Special Gifts */}
+      {shouldShowDetail('presentesEspeciais') || shouldShowDetail('presentes_especiais') ? (
+        <Card className="bg-yellow-50 border-yellow-200">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-3 text-lg font-medium text-orange-700">
+              <Gift className="h-5 w-5 text-orange-600" />
+              Presentes Especiais
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+              <span className="text-sm font-medium text-orange-700">
+                Incluído no orçamento
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      ) : null}
 
       {/* Selected Styles */}
       {estilosArray.length > 0 && (

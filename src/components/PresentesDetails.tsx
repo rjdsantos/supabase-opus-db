@@ -8,23 +8,23 @@ interface PresentesDetailsProps {
 }
 
 const PresentesDetails = ({ detalhes }: PresentesDetailsProps) => {
-  // Helper function to get detail value by key
-  const getDetalhe = (chave: string) => {
-    const detalhe = detalhes.find(d => d.chave === chave);
-    return detalhe?.valor || '';
-  };
+  // Helper to get a detail value by key
+  const getDetalhe = (chave: string) => detalhes.find((d) => d.chave === chave)?.valor || "";
 
-  // Get delivery date
-  const dataEntrega = getDetalhe('data_entrega') || getDetalhe('dataEntrega');
-  
-  // Get gift type  
-  const tipoPresente = getDetalhe('tipo_presente') || getDetalhe('tipoPresente');
-  
-  // Get additional instructions
-  const instrucoes = getDetalhe('instrucoes_adicionais') || getDetalhe('instrucoesAdicionais') || getDetalhe('observacoes_presentes');
-
-  // Parse date for calendar
+  // Delivery date (data_entrega)
+  const dataEntrega = getDetalhe("data_entrega") || getDetalhe("dataEntrega");
   const deliveryDate = dataEntrega ? new Date(dataEntrega) : undefined;
+
+  // Gift type
+  const tipoPresente = getDetalhe("tipo_presente") || getDetalhe("tipoPresente");
+
+  // Additional notes (observações) - guarantee presence on screen
+  const observacoes =
+    getDetalhe("orientacoes_adicionais") ||
+    getDetalhe("observacoes_adicionais") ||
+    getDetalhe("observacoes_presentes") ||
+    getDetalhe("instrucoes_adicionais") ||
+    getDetalhe("instrucoesAdicionais");
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -38,8 +38,8 @@ const PresentesDetails = ({ detalhes }: PresentesDetailsProps) => {
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Column - Delivery Date */}
-        {dataEntrega && (
+        {/* Delivery Date */}
+        {deliveryDate && (
           <Card className="p-0">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-3 text-lg font-medium">
@@ -48,27 +48,20 @@ const PresentesDetails = ({ detalhes }: PresentesDetailsProps) => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Calendar
-                mode="single"
-                selected={deliveryDate}
-                className="rounded-lg border w-full"
-                disabled={true}
-              />
-              {deliveryDate && (
-                <p className="text-sm font-medium text-center text-foreground">
-                  {deliveryDate.toLocaleDateString('pt-BR', {
-                    weekday: 'long',
-                    day: '2-digit',
-                    month: 'long',
-                    year: 'numeric'
-                  }).replace(/^\w/, c => c.toUpperCase())}
-                </p>
-              )}
+              <Calendar mode="single" selected={deliveryDate} className="rounded-lg border w-full" disabled={true} />
+              <p className="text-sm font-medium text-center text-foreground">
+                {deliveryDate.toLocaleDateString("pt-BR", {
+                  weekday: "long",
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                }).replace(/^\w/, (c) => c.toUpperCase())}
+              </p>
             </CardContent>
           </Card>
         )}
 
-        {/* Right Column - Gift Type */}
+        {/* Gift Type */}
         {tipoPresente && (
           <Card className="p-0">
             <CardHeader className="pb-4">
@@ -88,22 +81,20 @@ const PresentesDetails = ({ detalhes }: PresentesDetailsProps) => {
         )}
       </div>
 
-      {/* Additional Instructions */}
-      {instrucoes && (
-        <Card className="p-0">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-3 text-lg font-medium">
-              <FileText className="h-5 w-5" />
-              Observações Adicionais
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-foreground leading-relaxed">
-              {instrucoes}
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      {/* Observações Adicionais - always visible */}
+      <Card className="p-0">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-3 text-lg font-medium">
+            <FileText className="h-5 w-5" />
+            Observações Adicionais
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-foreground leading-relaxed">
+            {observacoes && observacoes.trim().length > 0 ? observacoes : "—"}
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 };

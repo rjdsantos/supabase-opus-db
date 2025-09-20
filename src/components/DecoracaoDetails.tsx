@@ -27,7 +27,7 @@ const DecoracaoDetails = ({ detalhes }: DecoracaoDetailsProps) => {
   const dataEvento = getDetalhe('dataEvento') || getDetalhe('data_evento');
   
   // Get number of guests
-  const quantidadeConvidados = getDetalhe('quantidadeConvidados') || getDetalhe('quantidade_convidados');
+  const quantidadeConvidados = getDetalhe('n_convidados') || getDetalhe('quantidadeConvidados') || getDetalhe('quantidade_convidados');
   
   // Get event description
   const descricaoEvento = getDetalhe('descricaoEvento') || getDetalhe('descricao_evento') || getDetalhe('descricao');
@@ -41,6 +41,7 @@ const DecoracaoDetails = ({ detalhes }: DecoracaoDetailsProps) => {
     d.chave !== 'tipo_evento' &&
     d.chave !== 'dataEvento' && 
     d.chave !== 'data_evento' &&
+    d.chave !== 'n_convidados' &&
     d.chave !== 'quantidadeConvidados' && 
     d.chave !== 'quantidade_convidados' &&
     d.chave !== 'descricaoEvento' && 

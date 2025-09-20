@@ -94,7 +94,7 @@ const PresentesDetails = ({ detalhes }: PresentesDetailsProps) => {
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-3 text-lg font-medium">
               <FileText className="h-5 w-5" />
-              Orientações Adicionais
+              Observações Adicionais
             </CardTitle>
           </CardHeader>
           <CardContent>

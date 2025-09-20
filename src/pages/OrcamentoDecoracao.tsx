@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -85,7 +85,9 @@ type FormData = z.infer<typeof formSchema>;
 
 export const OrcamentoDecoracao = () => {
   const navigate = useNavigate();
-  const { budget, details, loading, saving, error, saveDraft, finalizeBudget, deleteDetails } = useOrcamentoBudget('decoracao');
+  const [searchParams] = useSearchParams();
+  const budgetId = searchParams.get('id_orcamento') || undefined;
+  const { budget, details, loading, saving, error, saveDraft, finalizeBudget, deleteDetails } = useOrcamentoBudget('decoracao', budgetId);
   const { finalizeAndCreateLinked } = useOrcamentoRelated();
   const [showContinueOptions, setShowContinueOptions] = useState(false);
 

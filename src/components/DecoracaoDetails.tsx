@@ -77,6 +77,7 @@ const DecoracaoDetails = ({ detalhes }: DecoracaoDetailsProps) => {
                 <Calendar
                   mode="single"
                   selected={eventDate}
+                  defaultMonth={eventDate}
                   className="rounded-md border"
                   disabled={true}
                 />

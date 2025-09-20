@@ -48,7 +48,7 @@ const PresentesDetails = ({ detalhes }: PresentesDetailsProps) => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Calendar mode="single" selected={deliveryDate} className="rounded-lg border w-full" disabled={true} />
+              <Calendar mode="single" selected={deliveryDate} defaultMonth={deliveryDate} className="rounded-lg border w-full" disabled={true} />
               <p className="text-sm font-medium text-center text-foreground">
                 {deliveryDate.toLocaleDateString("pt-BR", {
                   weekday: "long",

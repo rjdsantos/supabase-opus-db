@@ -87,6 +87,7 @@ const LembrancinhasDetails = ({ detalhes }: LembrancinhasDetailsProps) => {
               <Calendar
                 mode="single"
                 selected={eventDate}
+                defaultMonth={eventDate}
                 className="rounded-lg border w-full"
                 disabled={true}
               />

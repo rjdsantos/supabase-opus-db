@@ -12,6 +12,7 @@ import Header from "@/components/Header";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { KeyValueList } from "@/components/KeyValueList";
 import DecoracaoDetails from "@/components/DecoracaoDetails";
+import LembrancinhasDetails from "@/components/LembrancinhasDetails";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -241,6 +242,8 @@ const ClientOrcamentoDetail = () => {
             {/* Budget Details */}
             {orcamento.categoria === 'decoracao' ? (
               <DecoracaoDetails detalhes={orcamento.detalhes} />
+            ) : orcamento.categoria === 'lembrancinhas' ? (
+              <LembrancinhasDetails detalhes={orcamento.detalhes} />
             ) : (
               <KeyValueList 
                 title="Detalhes do Orçamento" 

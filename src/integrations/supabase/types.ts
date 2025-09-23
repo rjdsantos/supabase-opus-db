@@ -178,7 +178,6 @@ export type Database = {
           id_cliente: string
           id_orcamento: string
           id_orcamento_vinculado: string | null
-          is_draft: boolean | null
           status: Database["public"]["Enums"]["status_orcamento"]
           updated_at: string
         }
@@ -189,7 +188,6 @@ export type Database = {
           id_cliente: string
           id_orcamento?: string
           id_orcamento_vinculado?: string | null
-          is_draft?: boolean | null
           status?: Database["public"]["Enums"]["status_orcamento"]
           updated_at?: string
         }
@@ -200,7 +198,6 @@ export type Database = {
           id_cliente?: string
           id_orcamento?: string
           id_orcamento_vinculado?: string | null
-          is_draft?: boolean | null
           status?: Database["public"]["Enums"]["status_orcamento"]
           updated_at?: string
         }
@@ -277,7 +274,6 @@ export type Database = {
           id_cliente: string | null
           id_orcamento: string | null
           id_orcamento_vinculado: string | null
-          is_draft: boolean | null
           status: Database["public"]["Enums"]["status_orcamento"] | null
           updated_at: string | null
         }

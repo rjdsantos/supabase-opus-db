@@ -7,7 +7,6 @@ interface RelatedOrcamento {
   id_orcamento: string;
   categoria: 'decoracao' | 'lembrancinhas' | 'presentes';
   status: 'novo' | 'respondido' | 'concluido';
-  is_draft: boolean;
   data_envio: string | null;
   created_at: string;
 }
@@ -41,11 +40,10 @@ export const useOrcamentoRelated = () => {
       );
       await Promise.all(detailsPromises);
 
-      // Finalize current budget
+      // Update current budget data_envio if needed
       const { error: updateError } = await supabase
         .from('orcamentos')
         .update({
-          is_draft: false,
           data_envio: new Date().toISOString()
         })
         .eq('id_orcamento', currentBudgetId)
@@ -68,14 +66,14 @@ export const useOrcamentoRelated = () => {
       ];
       await Promise.all(notificationPromises);
 
-      // Create new linked budget
+      // Create new linked budget 
       const { data: newBudget, error: createError } = await supabase
         .from('orcamentos')
         .insert({
           id_cliente: user.id,
           categoria: nextCategory,
           status: 'novo',
-          is_draft: true,
+          data_envio: new Date().toISOString(),
           id_orcamento_vinculado: currentBudgetId
         })
         .select()
@@ -107,7 +105,7 @@ export const useOrcamentoRelated = () => {
       // Get budgets linked to this one (this budget as parent)
       const { data: childBudgets, error: childError } = await supabase
         .from('orcamentos')
-        .select('id_orcamento, categoria, status, is_draft, data_envio, created_at')
+        .select('id_orcamento, categoria, status, data_envio, created_at')
         .eq('id_orcamento_vinculado', budgetId)
         .eq('id_cliente', user?.id);
 
@@ -124,7 +122,7 @@ export const useOrcamentoRelated = () => {
       if (currentBudget?.id_orcamento_vinculado) {
         const { data: parent, error: parentError } = await supabase
           .from('orcamentos')
-          .select('id_orcamento, categoria, status, is_draft, data_envio, created_at')
+          .select('id_orcamento, categoria, status, data_envio, created_at')
           .eq('id_orcamento', currentBudget.id_orcamento_vinculado)
           .eq('id_cliente', user?.id)
           .single();

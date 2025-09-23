@@ -8,7 +8,6 @@ interface RelatedBudget {
   id_orcamento: string;
   categoria: 'decoracao' | 'lembrancinhas' | 'presentes';
   status: 'novo' | 'respondido' | 'concluido';
-  is_draft: boolean;
   data_envio: string | null;
   created_at: string;
 }
@@ -28,10 +27,6 @@ const getCategoryLabel = (categoria: string) => {
 };
 
 const getStatusIcon = (budget: RelatedBudget) => {
-  if (budget.is_draft) {
-    return <Clock className="h-4 w-4 text-yellow-500" />;
-  }
-  
   switch (budget.status) {
     case 'novo':
       return <AlertCircle className="h-4 w-4 text-blue-500" />;
@@ -45,7 +40,7 @@ const getStatusIcon = (budget: RelatedBudget) => {
 };
 
 const getStatusLabel = (budget: RelatedBudget) => {
-  if (budget.is_draft) return 'Rascunho';
+  
   
   switch (budget.status) {
     case 'novo': return 'Novo';
@@ -116,8 +111,7 @@ export const LinkedBudgets: React.FC<LinkedBudgetsProps> = ({
                 </div>
               </div>
               <Badge 
-                variant={budget.is_draft ? "secondary" : 
-                         budget.status === 'concluido' ? "default" : "outline"}
+                variant={budget.status === 'concluido' ? "default" : "outline"}
               >
                 {getStatusLabel(budget)}
               </Badge>

@@ -23,7 +23,6 @@ interface BudgetInfo {
   categoria: string;
   status: string;
   data_envio: string;
-  is_draft: boolean;
   detalhes: Array<{ chave: string; valor: string }>;
 }
 
@@ -58,15 +57,15 @@ export const OrcamentoConfirmacao = () => {
       try {
         const { data, error } = await supabase
           .from('orcamentos')
-          .select('id_orcamento, categoria, status, data_envio, is_draft')
+          .select('id_orcamento, categoria, status, data_envio')
           .eq('id_orcamento', budgetId)
           .eq('id_cliente', user.id)
           .single();
 
         if (error) throw error;
 
-        if (!data || data.is_draft) {
-          setError('Orçamento não finalizado');
+        if (!data) {
+          setError('Orçamento não encontrado');
           setLoading(false);
           return;
         }

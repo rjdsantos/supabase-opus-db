@@ -50,7 +50,6 @@ interface OrcamentoDraft {
   categoria: string;
   status: string;
   created_at: string;
-  is_draft: boolean;
 }
 
 const ClientDashboard = () => {
@@ -85,28 +84,18 @@ const ClientDashboard = () => {
           setProfileData(profileData);
         }
 
-        // Fetch drafts and recent budgets
-        const { data: draftsData, error: draftsError } = await supabase
+        // Fetch recent budgets
+        const { data: budgetsData, error: budgetsError } = await supabase
           .from('orcamentos')
-          .select('id_orcamento, categoria, status, created_at, is_draft')
+          .select('id_orcamento, categoria, status, created_at')
           .eq('id_cliente', profile.user_id)
           .order('created_at', { ascending: false })
           .limit(20);
 
-        if (draftsError) {
-          console.error('Error fetching drafts:', draftsError);
+        if (budgetsError) {
+          console.error('Error fetching budgets:', budgetsError);
         } else {
-          const items = draftsData || [];
-          // Avoid showing duplicate drafts for the same category (keep the most recent)
-          const seenDraftCategory = new Set<string>();
-          const cleaned = items.filter((item) => {
-            if (item.is_draft === true) {
-              if (seenDraftCategory.has(item.categoria)) return false;
-              seenDraftCategory.add(item.categoria);
-            }
-            return true;
-          });
-          setDrafts(cleaned);
+          setDrafts(budgetsData || []);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -127,11 +116,7 @@ const ClientDashboard = () => {
   };
 
   const handleContinueDraft = (draft: OrcamentoDraft) => {
-    if (draft.is_draft) {
-      navigate(`/orcamento/${draft.categoria}`);
-    } else {
-      navigate(`/orcamentos/${draft.id_orcamento}`);
-    }
+    navigate(`/orcamentos/${draft.id_orcamento}`);
   };
 
   const getFirstName = (fullName: string) => {
@@ -196,7 +181,7 @@ const ClientDashboard = () => {
             </Alert>
           )}
 
-          {/* Existing Drafts and Budgets */}
+          {/* Existing Budgets */}
           {!draftsLoading && drafts.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-semibold text-foreground mb-4 flex items-center gap-2">
@@ -214,8 +199,8 @@ const ClientDashboard = () => {
                         <CardTitle className="text-lg font-semibold text-card-foreground">
                           {getCategoryDisplayName(draft.categoria)}
                         </CardTitle>
-                        <Badge variant={draft.is_draft ? "secondary" : "default"}>
-                          {draft.is_draft ? (
+                          <Badge variant="default">
+                            {(
                             <>
                               <Clock className="h-3 w-3 mr-1" />
                               Rascunho
@@ -236,9 +221,9 @@ const ClientDashboard = () => {
                       <Button 
                         onClick={() => handleContinueDraft(draft)}
                         className="w-full"
-                        variant={draft.is_draft ? "default" : "outline"}
-                      >
-                        {draft.is_draft ? 'Continuar Editando' : 'Ver Detalhes'}
+                          variant="outline"
+                        >
+                          Ver Detalhes
                       </Button>
                     </CardContent>
                   </Card>

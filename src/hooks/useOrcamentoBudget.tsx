@@ -6,7 +6,6 @@ import { useAuth } from '@/hooks/useAuth';
 export interface OrcamentoBudget {
   id_orcamento: string;
   categoria: 'decoracao' | 'lembrancinhas' | 'presentes';
-  is_draft: boolean;
   status: 'novo' | 'respondido' | 'concluido';
   data_envio: string | null;
   created_at: string;
@@ -46,76 +45,12 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
 
         if (specificError) throw specificError;
         currentBudget = specificBudget;
-      } else {
-        // Try to find existing draft (idempotent and safe with StrictMode)
-        const { data: existingBudget, error: findError } = await supabase
-          .from('orcamentos')
-          .select('*')
-          .eq('id_cliente', user.id)
-          .eq('categoria', categoria)
-          .eq('is_draft', true)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        currentBudget = existingBudget;
-
-        if (!currentBudget && findError) {
-          throw findError;
-        }
       }
 
+      // Since we no longer support drafts, if no budget is provided, 
+      // this means we need to create a finalized one directly
       if (!currentBudget) {
-        // Check if there's a linked budget from another category that we should connect to
-        let linkedBudgetId = null;
-        
-        if (idOrcamento) {
-          // If we have an ID from URL, try to find if it's a different category
-          const { data: existingBudget } = await supabase
-            .from('orcamentos')
-            .select('id_orcamento, categoria')
-            .eq('id_orcamento', idOrcamento)
-            .eq('id_cliente', user.id)
-            .single();
-            
-          if (existingBudget && existingBudget.categoria !== categoria) {
-            linkedBudgetId = existingBudget.id_orcamento;
-          }
-        }
-
-        // Attempt to create a new draft
-        const { data: newBudget, error: createError } = await supabase
-          .from('orcamentos')
-          .insert({
-            id_cliente: user.id,
-            categoria,
-            status: 'novo',
-            is_draft: true,
-            id_orcamento_vinculado: linkedBudgetId
-          })
-          .select()
-          .single();
-
-        if (createError) {
-          // Handle race condition: if a duplicate was created concurrently, fetch it
-          if (createError.code === '23505' || createError.code === '409') {
-            const { data: retryBudget, error: retryError } = await supabase
-              .from('orcamentos')
-              .select('*')
-              .eq('id_cliente', user.id)
-              .eq('categoria', categoria)
-              .eq('is_draft', true)
-              .order('created_at', { ascending: false })
-              .limit(1)
-              .maybeSingle();
-            if (retryError) throw retryError;
-            currentBudget = retryBudget;
-          } else {
-            throw createError;
-          }
-        } else {
-          currentBudget = newBudget;
-        }
+        throw new Error('Nenhum orçamento encontrado. Você deve finalizar um orçamento diretamente.');
       }
 
       setBudget(currentBudget);
@@ -191,34 +126,6 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
     }
   };
 
-  const saveDraft = async (formData: Record<string, string>) => {
-    if (!budget) return;
-
-    try {
-      setSaving(true);
-
-      // Save all current form data
-      const promises = Object.entries(formData).map(([key, value]) =>
-        saveDetail(key, value)
-      );
-
-      await Promise.all(promises);
-
-      toast({
-        title: "Rascunho salvo",
-        description: "Suas informações foram salvas com sucesso.",
-      });
-    } catch (error: any) {
-      console.error('Error saving draft:', error);
-      toast({
-        title: "Erro ao salvar",
-        description: error.message || "Falha ao salvar o rascunho.",
-        variant: "destructive",
-      });
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const finalizeBudget = async (formData: Record<string, string>) => {
     if (!user) {
@@ -255,7 +162,6 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
             id_cliente: user.id,
             categoria,
             status: 'novo',
-            is_draft: false,
             data_envio: now,
             id_orcamento_vinculado: linkedBudgetId
           })
@@ -283,30 +189,6 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
             )
         );
         await Promise.all(promises);
-      }
-
-      // If existing budget was draft, finalize it now
-      if (budget && budget.id_orcamento === current.id_orcamento && budget.is_draft) {
-        const { error: updateError } = await supabase
-          .from('orcamentos')
-          .update({
-            is_draft: false,
-            data_envio: now,
-          })
-          .eq('id_orcamento', current.id_orcamento)
-          .eq('id_cliente', user.id);
-
-        if (updateError) throw updateError;
-
-        setBudget((prev) =>
-          prev
-            ? {
-                ...prev,
-                is_draft: false,
-                data_envio: now,
-              }
-            : prev
-        );
       }
 
       // Trigger notifications asynchronously
@@ -351,7 +233,6 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
     loading,
     saving,
     error,
-    saveDraft,
     finalizeBudget,
     saveDetail,
     deleteDetails,

@@ -87,7 +87,7 @@ export const OrcamentoDecoracao = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const budgetId = searchParams.get('id_orcamento') || undefined;
-  const { budget, details, loading, saving, error, saveDraft, finalizeBudget, deleteDetails } = useOrcamentoBudget('decoracao', budgetId);
+  const { budget, details, loading, saving, error, finalizeBudget, deleteDetails } = useOrcamentoBudget('decoracao', budgetId);
   const { finalizeAndCreateLinked } = useOrcamentoRelated();
   const [showContinueOptions, setShowContinueOptions] = useState(false);
 
@@ -182,11 +182,6 @@ export const OrcamentoDecoracao = () => {
     return result;
   };
 
-  const handleSaveDraft = async () => {
-    const formData = form.getValues();
-    const stringData = getFormDataAsStrings(formData);
-    await saveDraft(stringData);
-  };
 
   const handleAdvance = async () => {
     const isValid = await form.trigger();
@@ -205,8 +200,8 @@ export const OrcamentoDecoracao = () => {
         );
         navigate(`/orcamento/lembrancinhas?id_orcamento=${newBudgetId}`);
       } else {
-        await saveDraft(stringData);
-        setShowContinueOptions(true);
+        const newBudgetId = await finalizeBudget(stringData);
+        navigate(`/orcamentos/${newBudgetId}`);
       }
     } catch (error) {
       // Error handling is done in the hooks
@@ -655,15 +650,6 @@ export const OrcamentoDecoracao = () => {
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 pt-6">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleSaveDraft}
-                    disabled={saving}
-                  >
-                    {saving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                    Salvar Rascunho
-                  </Button>
 
                   {incluirLembrancinhas === 'sim' && !showContinueOptions && (
                     <Button onClick={handleAdvance} disabled={saving}>

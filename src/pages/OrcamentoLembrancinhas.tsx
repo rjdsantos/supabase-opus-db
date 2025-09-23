@@ -76,7 +76,7 @@ const OrcamentoLembrancinhas = () => {
     loading,
     saving,
     error,
-    saveDraft,
+    
     finalizeBudget,
     saveDetail,
     deleteDetails,
@@ -200,7 +200,7 @@ const OrcamentoLembrancinhas = () => {
         currentFormData[key] = value.toString();
       });
 
-      await saveDraft(currentFormData);
+      await finalizeBudget(currentFormData);
     } catch (error) {
       console.error("Error saving draft:", error);
     }
@@ -529,18 +529,6 @@ const OrcamentoLembrancinhas = () => {
 
             <Card>
               <CardFooter className="flex flex-col sm:flex-row gap-3 pt-6">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleSaveDraft}
-                  disabled={saving}
-                  className="w-full sm:w-auto"
-                >
-                  {saving ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : null}
-                  Salvar Rascunho
-                </Button>
 
                 {formData.incluir_presentes_especiais === "true" ? (
                   <Button

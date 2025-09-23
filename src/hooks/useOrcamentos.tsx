@@ -32,7 +32,7 @@ export const useOrcamentos = () => {
           cliente_email,
           cliente_telefone
         `)
-        .eq('is_draft', false)
+        
         .order('data_envio', { ascending: false });
 
       if (error) throw error;

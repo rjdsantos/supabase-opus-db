@@ -54,7 +54,7 @@ const OrcamentoPresentes = () => {
     loading,
     saving,
     error,
-    saveDraft,
+    
     finalizeBudget,
     reload
   } = useOrcamentoBudget('presentes', id_orcamento);
@@ -135,7 +135,7 @@ const OrcamentoPresentes = () => {
       detailsToSave.orientacoes_adicionais = formData.orientacoes_adicionais;
     }
 
-    await saveDraft(detailsToSave);
+    await finalizeBudget(detailsToSave);
   };
 
   const handleFinalizeBudget = async () => {
@@ -358,17 +358,6 @@ const OrcamentoPresentes = () => {
           {/* Footer com ações */}
           <div className="sticky bottom-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t mt-8 pt-4">
             <div className="flex flex-col sm:flex-row gap-3 justify-between">
-              <Button
-                variant="outline"
-                onClick={handleSaveDraft}
-                disabled={!budget?.id_orcamento || saving}
-                className="flex-1 sm:flex-none"
-              >
-                {saving ? (
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                ) : null}
-                Salvar Rascunho
-              </Button>
               
               <Button
                 onClick={handleFinalizeBudget}

@@ -22,7 +22,6 @@ interface OrcamentoDetailData {
   categoria: string;
   status: string;
   data_envio: string;
-  is_draft: boolean;
   detalhes: Array<{ chave: string; valor: string }>;
 }
 
@@ -45,7 +44,7 @@ const ClientOrcamentoDetail = () => {
         // Fetch orçamento info
         const { data: orcamentoData, error: orcamentoError } = await supabase
           .from('orcamentos')
-          .select('id_orcamento, categoria, status, data_envio, is_draft')
+          .select('id_orcamento, categoria, status, data_envio')
           .eq('id_orcamento', id)
           .eq('id_cliente', user.id)
           .single();
@@ -71,7 +70,6 @@ const ClientOrcamentoDetail = () => {
           categoria: orcamentoData.categoria,
           status: orcamentoData.status,
           data_envio: orcamentoData.data_envio,
-          is_draft: orcamentoData.is_draft,
           detalhes: detalhesData || [],
         };
 
@@ -232,9 +230,9 @@ const ClientOrcamentoDetail = () => {
                     <Label className="text-sm font-medium text-muted-foreground">
                       Tipo
                     </Label>
-                    <p className="mt-1 text-sm font-medium">
-                      {orcamento.is_draft ? 'Rascunho' : 'Finalizado'}
-                    </p>
+                     <p className="mt-1 text-sm font-medium">
+                       Finalizado
+                     </p>
                   </div>
                 </div>
               </CardContent>
@@ -255,7 +253,7 @@ const ClientOrcamentoDetail = () => {
             )}
 
             {/* Actions */}
-            {!orcamento.is_draft && (
+            {(
               <Card>
                 <CardHeader>
                   <CardTitle>Próximos Passos</CardTitle>
@@ -278,14 +276,6 @@ const ClientOrcamentoDetail = () => {
               </Card>
             )}
 
-            {/* Draft notice */}
-            {orcamento.is_draft && (
-              <Alert>
-                <AlertDescription>
-                  Este é um rascunho. Você pode continuar editando clicando em "Continuar Editando" no painel de orçamentos.
-                </AlertDescription>
-              </Alert>
-            )}
           </div>
         </div>
 

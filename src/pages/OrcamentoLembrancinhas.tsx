@@ -277,8 +277,8 @@ const OrcamentoLembrancinhas = () => {
     setSelectedStyles({});
     setSelectedDate(undefined);
     
-    // Navigate back to client dashboard
-    navigate('/cliente/dashboard');
+    // Navigate back to client budgets page
+    navigate('/orcamentos');
   };
 
   if (loading) {

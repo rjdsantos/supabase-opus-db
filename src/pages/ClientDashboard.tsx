@@ -195,36 +195,27 @@ const ClientDashboard = () => {
                     className="hover:shadow-lg transition-shadow duration-200 border-border bg-card"
                   >
                     <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg font-semibold text-card-foreground">
-                          {getCategoryDisplayName(draft.categoria)}
-                        </CardTitle>
-                          <Badge variant="default">
-                            {(
-                            <>
-                              <Clock className="h-3 w-3 mr-1" />
-                              Rascunho
-                            </>
-                          ) : (
-                            <>
-                              <CheckCircle2 className="h-3 w-3 mr-1" />
-                              {draft.status === 'pendente' ? 'Enviado' : draft.status}
-                            </>
-                          )}
-                        </Badge>
-                      </div>
+                       <div className="flex items-center justify-between">
+                         <CardTitle className="text-lg font-semibold text-card-foreground">
+                           {getCategoryDisplayName(draft.categoria)}
+                         </CardTitle>
+                         <Badge variant="default">
+                           <CheckCircle2 className="w-3 h-3 mr-1" />
+                           {draft.status === 'novo' ? 'Enviado' : draft.status}
+                         </Badge>
+                       </div>
                       <CardDescription className="text-sm text-muted-foreground">
                         Criado em {formatDate(draft.created_at)}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="pt-0">
-                      <Button 
-                        onClick={() => handleContinueDraft(draft)}
-                        className="w-full"
-                          variant="outline"
-                        >
-                          Ver Detalhes
-                      </Button>
+                       <Button 
+                         onClick={() => handleContinueDraft(draft)}
+                         className="w-full"
+                         variant="outline"
+                       >
+                         Ver Detalhes
+                       </Button>
                     </CardContent>
                   </Card>
                 ))}

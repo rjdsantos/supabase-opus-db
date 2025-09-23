@@ -169,6 +169,20 @@ const OrcamentoPresentes = () => {
     setShowAISuggestions(false);
   };
 
+  const handleDiscard = () => {
+    // Clear form data
+    setFormData({
+      data_entrega: undefined,
+      tipo_presente: "",
+      tipo_presente_outra_opcao_texto: "",
+      orientacoes_adicionais: ""
+    });
+    setShowAISuggestions(false);
+    
+    // Navigate back to client dashboard
+    navigate('/cliente/dashboard');
+  };
+
   if (loading) {
     return (
       <AuthGuard requiredRole="client">
@@ -358,6 +372,13 @@ const OrcamentoPresentes = () => {
           {/* Footer com ações */}
           <div className="sticky bottom-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t mt-8 pt-4">
             <div className="flex flex-col sm:flex-row gap-3 justify-between">
+              <Button 
+                variant="outline" 
+                onClick={handleDiscard}
+                disabled={saving}
+              >
+                Descartar
+              </Button>
               
               <Button
                 onClick={handleFinalizeBudget}

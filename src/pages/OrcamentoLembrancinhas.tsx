@@ -264,6 +264,23 @@ const OrcamentoLembrancinhas = () => {
     setFormData((prev) => ({ ...prev, tema_cor_desejada: suggestion }));
   };
 
+  const handleDiscard = () => {
+    // Clear form data
+    setFormData({
+      data_entrega: "",
+      tipo_evento: "",
+      quantidade: "",
+      tema_cor_desejada: "",
+      incluir_presentes_especiais: "",
+      estilo_outra_opcao_texto: "",
+    });
+    setSelectedStyles({});
+    setSelectedDate(undefined);
+    
+    // Navigate back to client dashboard
+    navigate('/cliente/dashboard');
+  };
+
   if (loading) {
     return (
       <AuthGuard requiredRole="client">
@@ -529,6 +546,13 @@ const OrcamentoLembrancinhas = () => {
 
             <Card>
               <CardFooter className="flex flex-col sm:flex-row gap-3 pt-6">
+                <Button 
+                  variant="outline" 
+                  onClick={handleDiscard}
+                  disabled={saving}
+                >
+                  Descartar
+                </Button>
 
                 {formData.incluir_presentes_especiais === "true" ? (
                   <Button

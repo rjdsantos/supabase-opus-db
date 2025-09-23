@@ -239,6 +239,26 @@ export const OrcamentoDecoracao = () => {
     }
   };
 
+  const handleDiscard = () => {
+    // Clear form data
+    form.reset({
+      tipo_evento: '',
+      arvore_montagem_apenas: '',
+      arvore_tamanho: '',
+      n_convidados: '',
+      mesa_principal: false,
+      centro_mesa: false,
+      mesa_buffet: false,
+      painel_instagramavel: false,
+      baloes: false,
+      descricao_evento: '',
+      incluir_lembrancinhas: ''
+    });
+    
+    // Navigate back to client dashboard
+    navigate('/cliente/dashboard');
+  };
+
   if (loading) {
     return (
       <AuthGuard requiredRole="client">
@@ -650,6 +670,13 @@ export const OrcamentoDecoracao = () => {
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 pt-6">
+                  <Button 
+                    variant="outline" 
+                    onClick={handleDiscard}
+                    disabled={saving}
+                  >
+                    Descartar
+                  </Button>
 
                   {incluirLembrancinhas === 'sim' && !showContinueOptions && (
                     <Button onClick={handleAdvance} disabled={saving}>

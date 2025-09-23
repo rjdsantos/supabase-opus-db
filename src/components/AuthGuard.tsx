@@ -14,28 +14,32 @@ export const AuthGuard = ({
   requiredRole, 
   fallbackRoute = '/login' 
 }: AuthGuardProps) => {
-  const { profile, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!loading) {
-      if (!profile) {
+      if (!user) {
         // Not authenticated
         navigate(fallbackRoute);
         return;
       }
 
-      if (requiredRole && profile.role !== requiredRole) {
-        // Wrong role - redirect based on actual role
-        if (profile.role === 'admin') {
-          navigate('/admin/orcamentos');
-        } else {
-          navigate('/orcamentos');
+      // If a specific role is required, wait until profile is available
+      if (requiredRole) {
+        if (!profile) return; // wait for profile load instead of redirecting
+        if (profile.role !== requiredRole) {
+          // Wrong role - redirect based on actual role
+          if (profile.role === 'admin') {
+            navigate('/admin/orcamentos');
+          } else {
+            navigate('/orcamentos');
+          }
+          return;
         }
-        return;
       }
     }
-  }, [profile, loading, navigate, requiredRole, fallbackRoute]);
+  }, [user, profile, loading, navigate, requiredRole, fallbackRoute]);
 
   if (loading) {
     return (
@@ -45,11 +49,20 @@ export const AuthGuard = ({
     );
   }
 
-  if (!profile) {
+  // While authenticated but waiting for profile (for role checks), show loader
+  if (user && requiredRole && !profile) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user) {
     return null; // Will redirect in useEffect
   }
 
-  if (requiredRole && profile.role !== requiredRole) {
+  if (requiredRole && profile && profile.role !== requiredRole) {
     return null; // Will redirect in useEffect
   }
 

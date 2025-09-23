@@ -95,12 +95,15 @@ export const useAuth = () => {
           }));
           
           // Defer profile fetching to avoid deadlocks
-          setTimeout(async () => {
-            const profile = await fetchProfile(session.user.id) || await createProfile(session.user);
-            setAuthState(prev => ({
-              ...prev,
-              profile,
-            }));
+          setTimeout(() => {
+            const loadProfile = async () => {
+              const profile = await fetchProfile(session.user.id) || await createProfile(session.user);
+              setAuthState(prev => ({
+                ...prev,
+                profile,
+              }));
+            };
+            loadProfile();
           }, 0);
         } else {
           setAuthState({

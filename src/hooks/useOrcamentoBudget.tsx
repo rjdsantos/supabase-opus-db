@@ -45,18 +45,10 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
 
         if (specificError) throw specificError;
         currentBudget = specificBudget;
-      }
 
-      // Since we no longer support drafts, if no budget is provided, 
-      // this means we need to create a finalized one directly
-      if (!currentBudget) {
-        throw new Error('Nenhum orçamento encontrado. Você deve finalizar um orçamento diretamente.');
-      }
+        setBudget(currentBudget);
 
-      setBudget(currentBudget);
-
-      // Load existing details
-      if (currentBudget) {
+        // Load existing details
         const { data: detailsData, error: detailsError } = await supabase
           .from('orcamento_detalhes')
           .select('chave, valor')
@@ -71,6 +63,11 @@ export const useOrcamentoBudget = (categoria: 'decoracao' | 'lembrancinhas' | 'p
           }
         });
         setDetails(detailsMap);
+      } else {
+        // No specific ID provided - we're starting a new budget
+        // Don't load anything, just reset state
+        setBudget(null);
+        setDetails({});
       }
     } catch (error: any) {
       console.error('Error loading budget:', error);

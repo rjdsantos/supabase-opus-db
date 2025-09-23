@@ -21,23 +21,13 @@ export const useOrcamentos = () => {
       setLoading(true);
       setError(null);
       
+      // Use the new secure function instead of the view
       const { data, error } = await supabase
-        .from('orcamentos_with_client')
-        .select(`
-          id_orcamento,
-          categoria,
-          status,
-          data_envio,
-          cliente_nome,
-          cliente_email,
-          cliente_telefone
-        `)
-        
-        .order('data_envio', { ascending: false });
+        .rpc('get_orcamentos_with_client_info');
 
       if (error) throw error;
       
-      console.log('Raw data from orcamentos_with_client:', data);
+      console.log('Raw data from get_orcamentos_with_client_info:', data);
 
       const mappedData: Orcamento[] = data.map((item: any) => ({
         id_orcamento: item.id_orcamento,

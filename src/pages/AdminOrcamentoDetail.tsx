@@ -54,23 +54,18 @@ const AdminOrcamentoDetail = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch orçamento with client info
-      const { data: orcamentoData, error: orcamentoError } = await supabase
-        .from('orcamentos_with_client')
-        .select(`
-          id_orcamento,
-          categoria,
-          status,
-          data_envio,
-          cliente_nome,
-          cliente_email,
-          cliente_telefone
-        `)
-        .eq('id_orcamento', id)
-        .single();
+      // Fetch orçamento with client info using the new secure function
+      const { data: allOrcamentos, error: orcamentoError } = await supabase
+        .rpc('get_orcamentos_with_client_info');
 
       if (orcamentoError) throw orcamentoError;
-      if (!orcamentoData) throw new Error('Orçamento não encontrado');
+
+      // Filter to get the specific budget
+      const orcamentoData = allOrcamentos?.find((o: any) => o.id_orcamento === id);
+      
+      if (!orcamentoData) {
+        throw new Error('Orçamento não encontrado');
+      }
       
       console.log('Orcamento data fetched:', orcamentoData);
 

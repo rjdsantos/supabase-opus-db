@@ -44,13 +44,6 @@ export type Database = {
             referencedRelation: "orcamentos"
             referencedColumns: ["id_orcamento"]
           },
-          {
-            foreignKeyName: "admin_status_id_orcamento_fkey"
-            columns: ["id_orcamento"]
-            isOneToOne: false
-            referencedRelation: "orcamentos_with_client"
-            referencedColumns: ["id_orcamento"]
-          },
         ]
       }
       ia_interacoes: {
@@ -216,13 +209,6 @@ export type Database = {
             referencedRelation: "orcamentos"
             referencedColumns: ["id_orcamento"]
           },
-          {
-            foreignKeyName: "orcamentos_id_orcamento_vinculado_fkey"
-            columns: ["id_orcamento_vinculado"]
-            isOneToOne: false
-            referencedRelation: "orcamentos_with_client"
-            referencedColumns: ["id_orcamento"]
-          },
         ]
       }
       profiles: {
@@ -263,49 +249,28 @@ export type Database = {
       }
     }
     Views: {
-      orcamentos_with_client: {
-        Row: {
-          categoria: Database["public"]["Enums"]["categoria_orcamento"] | null
-          cliente_email: string | null
-          cliente_nome: string | null
-          cliente_telefone: string | null
-          created_at: string | null
-          data_envio: string | null
-          id_cliente: string | null
-          id_orcamento: string | null
-          id_orcamento_vinculado: string | null
-          status: Database["public"]["Enums"]["status_orcamento"] | null
-          updated_at: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_orcamentos_cliente"
-            columns: ["id_cliente"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "orcamentos_id_orcamento_vinculado_fkey"
-            columns: ["id_orcamento_vinculado"]
-            isOneToOne: false
-            referencedRelation: "orcamentos"
-            referencedColumns: ["id_orcamento"]
-          },
-          {
-            foreignKeyName: "orcamentos_id_orcamento_vinculado_fkey"
-            columns: ["id_orcamento_vinculado"]
-            isOneToOne: false
-            referencedRelation: "orcamentos_with_client"
-            referencedColumns: ["id_orcamento"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       can_view_orcamento: {
         Args: { _orcamento_id: string }
         Returns: boolean
+      }
+      get_orcamentos_with_client_info: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          categoria: Database["public"]["Enums"]["categoria_orcamento"]
+          cliente_email: string
+          cliente_nome: string
+          cliente_telefone: string
+          created_at: string
+          data_envio: string
+          id_cliente: string
+          id_orcamento: string
+          id_orcamento_vinculado: string
+          status: Database["public"]["Enums"]["status_orcamento"]
+          updated_at: string
+        }[]
       }
       is_current_user_admin: {
         Args: Record<PropertyKey, never>

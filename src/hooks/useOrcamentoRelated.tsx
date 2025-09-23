@@ -51,20 +51,16 @@ export const useOrcamentoRelated = () => {
 
       if (updateError) throw updateError;
 
-      // Create notifications for finalized budget
-      const notificationPromises = [
-        supabase.from('notificacoes').insert({
-          id_orcamento: currentBudgetId,
-          tipo: 'email_cliente',
-          status_envio: 'pendente'
-        }),
-        supabase.from('notificacoes').insert({
-          id_orcamento: currentBudgetId,
-          tipo: 'email_admin',
-          status_envio: 'pendente'
-        })
-      ];
-      await Promise.all(notificationPromises);
+      // Trigger notifications via edge function (secure way)
+      try {
+        await supabase.functions.invoke('notify-orcamento-finalizado', {
+          body: { id_orcamento: currentBudgetId }
+        });
+        console.log('Notificações disparadas para orçamento:', currentBudgetId);
+      } catch (notificationError) {
+        console.error('Erro ao enviar notificações:', notificationError);
+        // Não bloqueia o fluxo principal se notificações falharem
+      }
 
       // Create new linked budget 
       const { data: newBudget, error: createError } = await supabase

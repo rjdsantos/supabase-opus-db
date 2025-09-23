@@ -83,18 +83,25 @@ export const useAuth = () => {
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         if (session?.user) {
-          // Fetch or create profile for the user
-          const profile = await fetchProfile(session.user.id) || await createProfile(session.user);
-          
-          setAuthState({
+          // Set session immediately to avoid loading states
+          setAuthState(prev => ({
+            ...prev,
             user: session.user,
             session,
-            profile,
             loading: false,
             error: null,
-          });
+          }));
+          
+          // Defer profile fetching to avoid deadlocks
+          setTimeout(async () => {
+            const profile = await fetchProfile(session.user.id) || await createProfile(session.user);
+            setAuthState(prev => ({
+              ...prev,
+              profile,
+            }));
+          }, 0);
         } else {
           setAuthState({
             user: null,

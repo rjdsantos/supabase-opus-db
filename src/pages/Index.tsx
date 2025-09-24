@@ -6,10 +6,12 @@ import { useNavigate } from "react-router-dom";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import Header from "@/components/Header";
 import { useAuth } from "@/hooks/useAuth";
-
 const Index = () => {
   const navigate = useNavigate();
-  const { profile, loading } = useAuth();
+  const {
+    profile,
+    loading
+  } = useAuth();
 
   // Redirect if user is already logged in
   useEffect(() => {
@@ -25,17 +27,12 @@ const Index = () => {
       return () => clearTimeout(timer);
     }
   }, [profile, loading, navigate]);
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center">
+    return <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+  return <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       <Header />
 
       {/* Hero Section */}
@@ -98,8 +95,7 @@ const Index = () => {
           </div>
 
           {/* CTA Section */}
-          {!profile ? (
-            <Card className="p-8">
+          {!profile ? <Card className="p-8">
               <CardContent className="space-y-6">
                 <div>
                   <h3 className="text-2xl font-semibold mb-2">
@@ -111,83 +107,56 @@ const Index = () => {
                 </div>
                 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button
-                    onClick={() => navigate('/login?tab=signup')}
-                    size="lg"
-                    className="flex items-center gap-2"
-                  >
+                  <Button onClick={() => navigate('/login?tab=signup')} size="lg" className="flex items-center gap-2">
                     Criar Conta Grátis
                     <ArrowRight className="h-4 w-4" />
                   </Button>
-                  <Button
-                    onClick={() => navigate('/login?tab=signin')}
-                    variant="outline"
-                    size="lg"
-                  >
+                  <Button onClick={() => navigate('/login?tab=signin')} variant="outline" size="lg">
                     Já tenho conta
                   </Button>
                 </div>
                 
                 <div className="pt-4 border-t">
-                  <Button
-                    onClick={() => navigate('/admin/login')}
-                    variant="link"
-                    size="sm"
-                    className="text-muted-foreground"
-                  >
+                  <Button onClick={() => navigate('/admin/login')} variant="link" size="sm" className="text-muted-foreground">
                     Acesso Administrativo
                   </Button>
                 </div>
               </CardContent>
-            </Card>
-          ) : (
-            <Card className="p-8">
+            </Card> : <Card className="p-8">
               <CardContent className="space-y-6">
                 <div>
                   <h3 className="text-2xl font-semibold mb-2">
                     Bem-vinda de volta, {profile.full_name.split(' ')[0]}!
                   </h3>
                   <p className="text-muted-foreground">
-                    {profile.role === 'admin' 
-                      ? 'Gerencie orçamentos e clientes no seu painel'
-                      : 'Continue criando seus orçamentos personalizados'
-                    }
+                    {profile.role === 'admin' ? 'Gerencie orçamentos e clientes no seu painel' : 'Continue criando seus orçamentos personalizados'}
                   </p>
                 </div>
                 
-                <Button
-                  onClick={() => {
-                    if (profile.role === 'admin') {
-                      navigate('/admin/orcamentos');
-                    } else {
-                      navigate('/orcamentos');
-                    }
-                  }}
-                  size="lg"
-                  className="flex items-center gap-2"
-                >
+                <Button onClick={() => {
+              if (profile.role === 'admin') {
+                navigate('/admin/orcamentos');
+              } else {
+                navigate('/orcamentos');
+              }
+            }} size="lg" className="flex items-center gap-2">
                   {profile.role === 'admin' ? 'Ir para Painel Admin' : 'Ver Meus Orçamentos'}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </CardContent>
-            </Card>
-          )}
+            </Card>}
         </div>
       </main>
 
       {/* Footer */}
       <footer className="border-t py-8 mt-16">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-muted-foreground">
-            © 2024 Jaque Natal - Criando momentos únicos e inesquecíveis
-          </p>
+          <p className="text-sm text-muted-foreground">© 2025 Jaqueé  Natal - Criando momentos únicos e inesquecíveis</p>
         </div>
       </footer>
 
       {/* WhatsApp Button */}
       <WhatsAppButton />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;

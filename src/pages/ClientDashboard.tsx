@@ -142,6 +142,45 @@ const ClientDashboard = () => {
     });
   };
 
+  const getStatusLabel = (status: string) => {
+    const labels = {
+      novo: "Novo",
+      respondido: "Respondido", 
+      concluido: "Concluído",
+      em_andamento: "Em andamento",
+      cancelado: "Cancelado"
+    };
+    return labels[status as keyof typeof labels] || status;
+  };
+
+  const getStatusColor = (status: string) => {
+    const colors = {
+      novo: "default" as const, // Azul
+      em_andamento: "secondary" as const, // Amarelo
+      respondido: "destructive" as const, // Laranja
+      concluido: "default" as const, // Verde
+      cancelado: "outline" as const // Cinza
+    };
+    return colors[status as keyof typeof colors] || "default";
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "novo":
+        return <Clock className="w-3 h-3 mr-1 text-status-novo" />;
+      case "em_andamento":
+        return <Clock className="w-3 h-3 mr-1 text-status-em-andamento" />;
+      case "respondido": 
+        return <AlertCircle className="w-3 h-3 mr-1 text-status-respondido" />;
+      case "concluido":
+        return <CheckCircle2 className="w-3 h-3 mr-1 text-status-concluido" />;
+      case "cancelado":
+        return <AlertCircle className="w-3 h-3 mr-1 text-status-cancelado" />;
+      default:
+        return <Clock className="w-3 h-3 mr-1" />;
+    }
+  };
+
   const isLoading = authLoading || profileLoading;
 
   return (
@@ -199,10 +238,10 @@ const ClientDashboard = () => {
                          <CardTitle className="text-lg font-semibold text-card-foreground">
                            {getCategoryDisplayName(draft.categoria)}
                          </CardTitle>
-                         <Badge variant="default">
-                           <CheckCircle2 className="w-3 h-3 mr-1" />
-                           {draft.status === 'novo' ? 'Enviado' : draft.status}
-                         </Badge>
+                          <Badge variant={getStatusColor(draft.status)}>
+                            {getStatusIcon(draft.status)}
+                            {getStatusLabel(draft.status)}
+                          </Badge>
                        </div>
                       <CardDescription className="text-sm text-muted-foreground">
                         Criado em {formatDate(draft.created_at)}

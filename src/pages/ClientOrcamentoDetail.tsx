@@ -108,15 +108,15 @@ const ClientOrcamentoDetail = () => {
   const getStatusVariant = (status: string) => {
     switch (status) {
       case 'novo':
-        return 'default' as const;
+        return 'status-novo' as const;
       case 'em_andamento':
-        return 'secondary' as const;
+        return 'status-em-andamento' as const;
       case 'respondido':
-        return 'destructive' as const;
+        return 'status-respondido' as const;
       case 'concluido':
-        return 'default' as const;
+        return 'status-concluido' as const;
       case 'cancelado':
-        return 'outline' as const;
+        return 'status-cancelado' as const;
       default:
         return 'outline' as const;
     }

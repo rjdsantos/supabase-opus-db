@@ -31,7 +31,9 @@ const AdminDashboard = () => {
     const colors = {
       novo: "default" as const,
       respondido: "secondary" as const, 
-      concluido: "outline" as const
+      concluido: "outline" as const,
+      em_andamento: "outline" as const,
+      cancelado: "destructive" as const
     };
     return colors[status as keyof typeof colors] || "default";
   };
@@ -40,13 +42,15 @@ const AdminDashboard = () => {
     const labels = {
       novo: "Novo",
       respondido: "Respondido",
-      concluido: "Concluído"
+      concluido: "Concluído",
+      em_andamento: "Em andamento",
+      cancelado: "Cancelado"
     };
     return labels[status as keyof typeof labels] || status;
   };
 
   const handleStatusChange = (id_orcamento: string, newStatus: string) => {
-    updateStatus(id_orcamento, newStatus as 'novo' | 'respondido' | 'concluido');
+    updateStatus(id_orcamento, newStatus as 'novo' | 'respondido' | 'concluido' | 'em_andamento' | 'cancelado');
   };
 
   const handleViewDetails = (id_orcamento: string) => {
@@ -196,7 +200,9 @@ const AdminDashboard = () => {
                       <SelectContent>
                         <SelectItem value="novo">Novo</SelectItem>
                         <SelectItem value="respondido">Respondido</SelectItem>
+                        <SelectItem value="em_andamento">Em andamento</SelectItem>
                         <SelectItem value="concluido">Concluído</SelectItem>
+                        <SelectItem value="cancelado">Cancelado</SelectItem>
                       </SelectContent>
                     </Select>
                   </CardFooter>

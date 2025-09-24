@@ -20,7 +20,9 @@ export const StatusTimeline = ({ statusHistory }: StatusTimelineProps) => {
     const labels = {
       novo: "Novo",
       respondido: "Respondido", 
-      concluido: "Concluído"
+      concluido: "Concluído",
+      em_andamento: "Em andamento",
+      cancelado: "Cancelado"
     };
     return labels[status as keyof typeof labels] || status;
   };
@@ -29,7 +31,9 @@ export const StatusTimeline = ({ statusHistory }: StatusTimelineProps) => {
     const colors = {
       novo: "default" as const,
       respondido: "secondary" as const,
-      concluido: "outline" as const
+      concluido: "outline" as const,
+      em_andamento: "outline" as const,
+      cancelado: "destructive" as const
     };
     return colors[status as keyof typeof colors] || "default";
   };

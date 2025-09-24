@@ -7,7 +7,7 @@ import { Link2, Calendar, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 interface RelatedBudget {
   id_orcamento: string;
   categoria: 'decoracao' | 'lembrancinhas' | 'presentes';
-  status: 'novo' | 'respondido' | 'concluido';
+  status: 'novo' | 'respondido' | 'concluido' | 'em_andamento' | 'cancelado';
   data_envio: string | null;
   created_at: string;
 }
@@ -32,20 +32,24 @@ const getStatusIcon = (budget: RelatedBudget) => {
       return <AlertCircle className="h-4 w-4 text-blue-500" />;
     case 'respondido':
       return <AlertCircle className="h-4 w-4 text-orange-500" />;
+    case 'em_andamento':
+      return <Clock className="h-4 w-4 text-yellow-500" />;
     case 'concluido':
       return <CheckCircle className="h-4 w-4 text-green-500" />;
+    case 'cancelado':
+      return <AlertCircle className="h-4 w-4 text-red-500" />;
     default:
       return <Clock className="h-4 w-4 text-gray-500" />;
   }
 };
 
 const getStatusLabel = (budget: RelatedBudget) => {
-  
-  
   switch (budget.status) {
     case 'novo': return 'Novo';
     case 'respondido': return 'Respondido';
+    case 'em_andamento': return 'Em andamento';
     case 'concluido': return 'Concluído';
+    case 'cancelado': return 'Cancelado';
     default: return budget.status;
   }
 };

@@ -288,7 +288,12 @@ export type Database = {
         | "festa_tematica"
         | "evento_corporativo"
         | "arvore_de_natal"
-      status_orcamento: "novo" | "respondido" | "concluido"
+      status_orcamento:
+        | "novo"
+        | "respondido"
+        | "concluido"
+        | "em_andamento"
+        | "cancelado"
       user_role: "client" | "admin"
     }
     CompositeTypes: {
@@ -428,7 +433,13 @@ export const Constants = {
         "evento_corporativo",
         "arvore_de_natal",
       ],
-      status_orcamento: ["novo", "respondido", "concluido"],
+      status_orcamento: [
+        "novo",
+        "respondido",
+        "concluido",
+        "em_andamento",
+        "cancelado",
+      ],
       user_role: ["client", "admin"],
     },
   },

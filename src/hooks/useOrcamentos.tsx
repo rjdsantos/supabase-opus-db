@@ -5,7 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 export interface Orcamento {
   id_orcamento: string;
   categoria: 'decoracao' | 'lembrancinhas' | 'presentes';
-  status: 'novo' | 'respondido' | 'concluido';
+  status: 'novo' | 'respondido' | 'concluido' | 'em_andamento' | 'cancelado';
   data_envio: string;
   cliente_nome: string;
 }
@@ -46,7 +46,7 @@ export const useOrcamentos = () => {
     }
   }, []);
 
-  const updateStatus = async (id_orcamento: string, newStatus: 'novo' | 'respondido' | 'concluido') => {
+  const updateStatus = async (id_orcamento: string, newStatus: 'novo' | 'respondido' | 'concluido' | 'em_andamento' | 'cancelado') => {
     try {
       const { error: updateError } = await supabase
         .from('orcamentos')

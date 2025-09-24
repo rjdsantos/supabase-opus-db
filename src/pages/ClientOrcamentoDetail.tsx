@@ -98,7 +98,9 @@ const ClientOrcamentoDetail = () => {
     const labels: Record<string, string> = {
       novo: 'Novo',
       respondido: 'Respondido',
-      concluido: 'Concluído'
+      concluido: 'Concluído',
+      em_andamento: 'Em andamento',
+      cancelado: 'Cancelado'
     };
     return labels[status] || status;
   };

@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 export interface OrcamentoBudget {
   id_orcamento: string;
   categoria: 'decoracao' | 'lembrancinhas' | 'presentes';
-  status: 'novo' | 'respondido' | 'concluido';
+  status: 'novo' | 'respondido' | 'concluido' | 'em_andamento' | 'cancelado';
   data_envio: string | null;
   created_at: string;
 }

@@ -27,13 +27,13 @@ const AdminDashboard = () => {
     return labels[categoria as keyof typeof labels] || categoria;
   };
 
-  const getStatusColor = (status: string): "default" | "destructive" | "secondary" | "outline" => {
+  const getStatusColor = (status: string): "default" | "destructive" | "secondary" | "outline" | "status-novo" | "status-em-andamento" | "status-respondido" | "status-concluido" | "status-cancelado" => {
     const colors = {
-      novo: "default" as const,
-      em_andamento: "secondary" as const,
-      respondido: "destructive" as const,
-      concluido: "default" as const,
-      cancelado: "outline" as const
+      novo: "status-novo" as const,
+      em_andamento: "status-em-andamento" as const,
+      respondido: "status-respondido" as const,
+      concluido: "status-concluido" as const,
+      cancelado: "status-cancelado" as const
     };
     return colors[status as keyof typeof colors] || "default";
   };

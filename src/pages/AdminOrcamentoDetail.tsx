@@ -120,7 +120,7 @@ const AdminOrcamentoDetail = () => {
       // Update status in orcamentos table
       const { error: updateError } = await supabase
         .from('orcamentos')
-        .update({ status: newStatus as 'novo' | 'respondido' | 'concluido' })
+        .update({ status: newStatus as 'novo' | 'respondido' | 'concluido' | 'em_andamento' | 'cancelado' })
         .eq('id_orcamento', orcamento.id_orcamento);
 
       if (updateError) throw updateError;
@@ -130,7 +130,7 @@ const AdminOrcamentoDetail = () => {
         .from('admin_status')
         .insert({
           id_orcamento: orcamento.id_orcamento,
-          status: newStatus as 'novo' | 'respondido' | 'concluido',
+          status: newStatus as 'novo' | 'respondido' | 'concluido' | 'em_andamento' | 'cancelado',
           admin_id: (await supabase.auth.getUser()).data.user?.id
         });
 
@@ -204,8 +204,10 @@ const AdminOrcamentoDetail = () => {
   const getStatusColor = (status: string): "default" | "destructive" | "secondary" | "outline" => {
     const colors = {
       novo: "default" as const,
-      respondido: "secondary" as const, 
-      concluido: "outline" as const
+      em_andamento: "secondary" as const,
+      respondido: "destructive" as const,
+      concluido: "outline" as const,
+      cancelado: "secondary" as const
     };
     return colors[status as keyof typeof colors] || "default";
   };
@@ -213,8 +215,10 @@ const AdminOrcamentoDetail = () => {
   const getStatusLabel = (status: string) => {
     const labels = {
       novo: "Novo",
+      em_andamento: "Em andamento",
       respondido: "Respondido",
-      concluido: "Concluído"
+      concluido: "Concluído",
+      cancelado: "Cancelado"
     };
     return labels[status as keyof typeof labels] || status;
   };
@@ -394,8 +398,10 @@ const AdminOrcamentoDetail = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="novo">Novo</SelectItem>
+                        <SelectItem value="em_andamento">Em andamento</SelectItem>
                         <SelectItem value="respondido">Respondido</SelectItem>
                         <SelectItem value="concluido">Concluído</SelectItem>
+                        <SelectItem value="cancelado">Cancelado</SelectItem>
                       </SelectContent>
                     </Select>
                     {updatingStatus && (

@@ -30,10 +30,10 @@ const AdminDashboard = () => {
   const getStatusColor = (status: string): "default" | "destructive" | "secondary" | "outline" => {
     const colors = {
       novo: "default" as const,
-      respondido: "secondary" as const, 
+      em_andamento: "secondary" as const,
+      respondido: "destructive" as const,
       concluido: "outline" as const,
-      em_andamento: "outline" as const,
-      cancelado: "destructive" as const
+      cancelado: "secondary" as const
     };
     return colors[status as keyof typeof colors] || "default";
   };

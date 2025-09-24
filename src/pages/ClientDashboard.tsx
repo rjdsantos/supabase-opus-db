@@ -167,17 +167,17 @@ const ClientDashboard = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "novo":
-        return <Clock className="w-3 h-3 mr-1 text-status-novo" />;
+        return <Clock className="w-3 h-3 mr-1 text-white" />;
       case "em_andamento":
-        return <Clock className="w-3 h-3 mr-1 text-status-em-andamento" />;
+        return <Clock className="w-3 h-3 mr-1 text-white" />;
       case "respondido": 
-        return <AlertCircle className="w-3 h-3 mr-1 text-status-respondido" />;
+        return <AlertCircle className="w-3 h-3 mr-1 text-white" />;
       case "concluido":
-        return <CheckCircle2 className="w-3 h-3 mr-1 text-status-concluido" />;
+        return <CheckCircle2 className="w-3 h-3 mr-1 text-white" />;
       case "cancelado":
-        return <AlertCircle className="w-3 h-3 mr-1 text-status-cancelado" />;
+        return <AlertCircle className="w-3 h-3 mr-1 text-white" />;
       default:
-        return <Clock className="w-3 h-3 mr-1" />;
+        return <Clock className="w-3 h-3 mr-1 text-white" />;
     }
   };
 

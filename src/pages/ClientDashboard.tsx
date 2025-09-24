@@ -155,11 +155,11 @@ const ClientDashboard = () => {
 
   const getStatusColor = (status: string) => {
     const colors = {
-      novo: "default" as const, // Azul
-      em_andamento: "secondary" as const, // Amarelo
-      respondido: "destructive" as const, // Laranja
-      concluido: "default" as const, // Verde
-      cancelado: "outline" as const // Cinza
+      novo: "status-novo" as const, // Azul
+      em_andamento: "status-em-andamento" as const, // Amarelo
+      respondido: "status-respondido" as const, // Laranja
+      concluido: "status-concluido" as const, // Verde
+      cancelado: "status-cancelado" as const // Cinza
     };
     return colors[status as keyof typeof colors] || "default";
   };

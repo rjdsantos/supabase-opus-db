@@ -115,7 +115,12 @@ export const LinkedBudgets: React.FC<LinkedBudgetsProps> = ({
                 </div>
               </div>
               <Badge 
-                variant={budget.status === 'concluido' ? "default" : "outline"}
+                variant={
+                  budget.status === 'concluido' ? "default" : 
+                  budget.status === 'cancelado' ? "outline" : 
+                  budget.status === 'respondido' ? "destructive" :
+                  budget.status === 'em_andamento' ? "secondary" : "default"
+                }
               >
                 {getStatusLabel(budget)}
               </Badge>

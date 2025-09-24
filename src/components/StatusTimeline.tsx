@@ -32,8 +32,8 @@ export const StatusTimeline = ({ statusHistory }: StatusTimelineProps) => {
       novo: "default" as const,
       em_andamento: "secondary" as const,
       respondido: "destructive" as const,
-      concluido: "outline" as const,
-      cancelado: "secondary" as const
+      concluido: "default" as const,
+      cancelado: "outline" as const
     };
     return colors[status as keyof typeof colors] || "default";
   };

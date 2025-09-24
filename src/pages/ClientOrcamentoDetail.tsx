@@ -114,9 +114,9 @@ const ClientOrcamentoDetail = () => {
       case 'respondido':
         return 'destructive' as const;
       case 'concluido':
-        return 'outline' as const;
+        return 'default' as const;
       case 'cancelado':
-        return 'secondary' as const;
+        return 'outline' as const;
       default:
         return 'outline' as const;
     }
